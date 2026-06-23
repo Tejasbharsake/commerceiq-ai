@@ -1,0 +1,312 @@
+<h1>CommerceIQ AI</h1>
+<h2>High-Level Design (HLD) Document</h2>
+<hr />
+<h2>1. Document Information</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Document Name</strong></td>
+<td style="text-align: left;">High-Level Design (HLD) Document</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Project Name</strong></td>
+<td style="text-align: left;">CommerceIQ AI</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Document Owner</strong></td>
+<td style="text-align: left;">Senior Solution Architect</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Status</strong></td>
+<td style="text-align: left;">Draft</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Creation Date</strong></td>
+<td style="text-align: left;">2026-06-24</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Last Modified Date</strong></td>
+<td style="text-align: left;">2026-06-24</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. Purpose</h2>
+<p>The purpose of this High-Level Design (HLD) document is to provide a comprehensive architectural overview of the CommerceIQ AI platform. It defines the system's structure, technology stack, deployment models, and interaction paradigms between various components and AI services. This document serves as the foundational blueprint for Technical Leads, DevOps, and Full Stack Developers.</p>
+<hr />
+<h2>3. Scope</h2>
+<p>This document covers the high-level architecture of the CommerceIQ AI SaaS platform, including the Next.js frontend, Node.js backend, PostgreSQL database, Redis caching, and integrations with OpenAI and Gemini APIs. It outlines the architectural patterns, security strategies, and scalability mechanisms required to support the platform's core business modules and AI features.</p>
+<hr />
+<h2>4. Assumptions</h2>
+<ul>
+<li>OpenAI and Gemini APIs will remain accessible and provide low-latency responses.</li>
+<li>The initial deployment targets moderate scale; however, the architecture must support horizontal scaling.</li>
+<li>The team size is fixed at 5 developers, requiring a streamlined CI/CD pipeline and manageable infrastructure (Vercel/Render).</li>
+<li>External systems (e.g., payment gateways) will provide reliable webhooks.</li>
+</ul>
+<hr />
+<h2>5. Constraints</h2>
+<ul>
+<li><strong>Time &amp; Resources:</strong> Development is constrained to a 5-developer team, favoring a Modular Monolith over microservices to reduce operational overhead.</li>
+<li><strong>Infrastructure:</strong> Backend must be deployable on Render; Frontend on Vercel.</li>
+<li><strong>Cost:</strong> AI API token consumption must be optimized to prevent runaway operational costs.</li>
+</ul>
+<hr />
+<h2>6. System Overview</h2>
+<p>CommerceIQ AI is a cloud-native, AI-powered e-commerce administration and Business Intelligence SaaS. It utilizes a layered RESTful architecture where a Next.js (React) client communicates with an Express.js backend. The backend interfaces with a PostgreSQL relational database for persistent storage, Redis for fast-access caching, and external AI providers for intelligent content generation and predictive analytics.</p>
+<hr />
+<h2>7. Architectural Goals</h2>
+<ul>
+<li><strong>Modularity:</strong> Clean separation of concerns using a modular monolith approach, preparing for future microservice extraction.</li>
+<li><strong>Performance:</strong> Sub-second API response times utilizing Redis caching.</li>
+<li><strong>Scalability:</strong> Stateless backend design allowing horizontal scaling across multiple instances.</li>
+<li><strong>Security:</strong> Defense-in-depth approach utilizing JWT, HTTPS, and OWASP best practices.</li>
+<li><strong>Maintainability:</strong> Strong typing (TypeScript) and comprehensive logging (Winston, Grafana).</li>
+</ul>
+<hr />
+<h2>8. High-Level Architecture Diagram</h2>
+<pre><code class="language-mermaid">graph TD
+    Client[Web Client - Next.js] --&gt;|HTTPS / REST| CDN[Vercel Edge CDN]
+    CDN --&gt;|API Requests| LB[Load Balancer - Render]
+    LB --&gt; API[Node.js / Express Backend API]
+    API --&gt;|Read/Write| Cache[(Redis Cache)]
+    API --&gt;|Read/Write| DB[(PostgreSQL Database)]
+    API --&gt;|REST/GraphQL| AI1[OpenAI API]
+    API --&gt;|REST| AI2[Gemini API]
+    API --&gt;|Metrics| Mon[Prometheus &amp; Grafana]
+</code></pre>
+<hr />
+<h2>9. Solution Architecture</h2>
+<p>The solution employs a <strong>Modular Monolith</strong> pattern. The application runs as a single deployable unit but is logically divided into distinct modules (Authentication, Product, Order, AI Services). This balances the simplicity needed by a 5-person team with the separation required for enterprise scalability.</p>
+<hr />
+<h2>10. Application Architecture</h2>
+<p>The backend application follows a standard <strong>Layered Architecture</strong>:
+1.  <strong>Presentation/Route Layer:</strong> Express routers handling HTTP request/response.
+2.  <strong>Controller Layer:</strong> Orchestrates data flow between requests and services.
+3.  <strong>Service/Business Logic Layer:</strong> Contains all business rules and AI orchestrations.
+4.  <strong>Data Access Layer (Repository):</strong> Interfaces directly with PostgreSQL and Redis.</p>
+<hr />
+<h2>11. Component Architecture</h2>
+<pre><code class="language-mermaid">graph LR
+    subgraph Frontend [Next.js Application]
+        UI[UI Components]
+        State[Global State Context/Redux]
+        API_Client[Axios API Client]
+    end
+
+    subgraph Backend [Node.js Express App]
+        AuthSvc[Auth Service]
+        VendorSvc[Vendor Service]
+        ProductSvc[Product Service]
+        OrderSvc[Order Service]
+        AISvc[AI Integration Service]
+    end
+
+    API_Client --&gt;|HTTP| AuthSvc
+    API_Client --&gt;|HTTP| ProductSvc
+    ProductSvc --&gt; AISvc
+</code></pre>
+<hr />
+<h2>12. Deployment Architecture</h2>
+<pre><code class="language-mermaid">graph TD
+    User[User Browser] --&gt;|DNS| Vercel[Vercel Platform]
+    Vercel --&gt;|Next.js Static/SSR| FrontendApp
+    User --&gt;|API Calls| Render[Render Platform]
+
+    subgraph Render Platform
+        LB[Render Load Balancer]
+        App1[Node.js Instance 1]
+        App2[Node.js Instance 2]
+        LB --&gt; App1
+        LB --&gt; App2
+    end
+
+    App1 --&gt; ManagedRedis[(Render Managed Redis)]
+    App1 --&gt; ManagedDB[(Render Managed PostgreSQL)]
+</code></pre>
+<hr />
+<h2>13. Infrastructure Architecture</h2>
+<ul>
+<li><strong>Frontend Hosting:</strong> Vercel (Edge network, automated deployments).</li>
+<li><strong>Backend Hosting:</strong> Render Web Services (Dockerized Node.js environment).</li>
+<li><strong>Database Hosting:</strong> Render Managed PostgreSQL (High Availability, automated backups).</li>
+<li><strong>Cache:</strong> Render Managed Redis.</li>
+</ul>
+<hr />
+<h2>14. Network Architecture</h2>
+<p>All communication between the client and backend occurs over public internet secured via TLS 1.3 (HTTPS). Backend to Database/Redis communication occurs over a private VPC internal network within the Render infrastructure, ensuring data is not exposed to the public internet.</p>
+<hr />
+<h2>15. Security Architecture</h2>
+<ul>
+<li><strong>Authentication:</strong> JWT-based. Short-lived Access Tokens (15 min); long-lived Refresh Tokens (7 days) stored in <code>HttpOnly</code> secure cookies.</li>
+<li><strong>RBAC:</strong> Middleware validates roles (Super Admin, Vendor, Analyst) before hitting controllers.</li>
+<li><strong>Data Encryption:</strong> TLS in transit; AES-256 for sensitive DB columns at rest.</li>
+<li><strong>API Security:</strong> Rate limiting via Redis. Helmet.js for secure HTTP headers.</li>
+<li><strong>OWASP:</strong> Input validation/sanitization via <code>Joi</code> or <code>Zod</code> to prevent SQL Injection and XSS.</li>
+</ul>
+<hr />
+<h2>16. Data Flow Architecture</h2>
+<pre><code class="language-mermaid">graph TD
+    Client --&gt;|1. Submit Form| Controller
+    Controller --&gt;|2. Validate Input| Validator
+    Validator --&gt;|3. Call Logic| Service
+    Service --&gt;|4. Check Cache| Redis
+    Redis -- Cache Miss --&gt; DB
+    DB --&gt;|5. Return Data| Service
+    Service --&gt;|6. Set Cache| Redis
+    Service --&gt;|7. Return Result| Controller
+    Controller --&gt;|8. JSON Response| Client
+</code></pre>
+<hr />
+<h2>17. Authentication Flow</h2>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant User
+    participant Frontend
+    participant AuthAPI
+    participant DB
+
+    User-&gt;&gt;Frontend: Enter Credentials
+    Frontend-&gt;&gt;AuthAPI: POST /login
+    AuthAPI-&gt;&gt;DB: Verify Password Hash
+    DB--&gt;&gt;AuthAPI: Valid
+    AuthAPI-&gt;&gt;AuthAPI: Generate Access &amp; Refresh JWTs
+    AuthAPI--&gt;&gt;Frontend: Set HttpOnly Cookie (Refresh), Return Access Token
+    Frontend-&gt;&gt;User: Redirect to Dashboard
+</code></pre>
+<hr />
+<h2>18. Authorization Flow</h2>
+<ol>
+<li>Client attaches Access Token to <code>Authorization: Bearer &lt;token&gt;</code> header.</li>
+<li>Express Middleware verifies signature using the secret key.</li>
+<li>Middleware extracts the <code>role</code> from the token payload.</li>
+<li>Middleware checks if the <code>role</code> is permitted for the requested route.</li>
+<li>If authorized, <code>next()</code> is called; else <code>403 Forbidden</code> is returned.</li>
+</ol>
+<hr />
+<h2>19. Integration Architecture</h2>
+<ul>
+<li><strong>AI Services Integration:</strong> Synchronous REST calls to OpenAI/Gemini endpoints. Configured with a circuit breaker pattern and automatic retries using exponential backoff.</li>
+<li><strong>Webhook Integrations:</strong> Dedicated controllers to accept incoming order data from external storefronts.</li>
+</ul>
+<hr />
+<h2>20. Logging &amp; Monitoring Architecture</h2>
+<ul>
+<li><strong>Logging:</strong> Winston logger is used to stream application logs. Error logs include stack traces, timestamps, and request IDs.</li>
+<li><strong>Monitoring:</strong> Custom metrics exposed via <code>/metrics</code> endpoint using <code>prom-client</code>.</li>
+<li><strong>Visualization:</strong> Prometheus scrapes metrics, visualized on Grafana dashboards (CPU, Memory, API Latency, AI Token Usage).</li>
+</ul>
+<hr />
+<h2>21. Error Handling Architecture</h2>
+<p>A global error handling middleware sits at the end of the Express chain.
+*   Catches unhandled promise rejections.
+*   Transforms internal errors (e.g., PostgreSQL <code>UniqueViolation</code>) into safe, user-friendly JSON responses (e.g., <code>409 Conflict: Record already exists</code>).
+*   Logs the original stack trace securely via Winston.</p>
+<hr />
+<h2>22. Caching Strategy</h2>
+<ul>
+<li><strong>Entity:</strong> Redis.</li>
+<li><strong>Strategy:</strong> Cache-Aside.</li>
+<li><strong>Use Cases:</strong> <ol>
+<li>Frequently accessed, rarely changing data (e.g., Categories).</li>
+<li>Aggregated Dashboard Metrics (cached for 15 minutes).</li>
+<li>Rate Limiter storage.</li>
+</ol>
+</li>
+<li><strong>Invalidation:</strong> Event-driven invalidation (e.g., updating a product flushes the cache for that product's ID).</li>
+</ul>
+<hr />
+<h2>23. Scalability Strategy</h2>
+<ul>
+<li><strong>Horizontal Scaling:</strong> Node.js servers are stateless. Render's auto-scaler provisions additional instances based on CPU utilization &gt; 70%.</li>
+<li><strong>Load Balancing:</strong> Handled natively by Render.</li>
+<li><strong>Database Optimization:</strong> Read-replicas will be introduced if read-heavy traffic (analytics) impacts transactional performance.</li>
+</ul>
+<hr />
+<h2>24. Availability &amp; Reliability Strategy</h2>
+<ul>
+<li><strong>Stateless Backend:</strong> Instance failure does not result in lost user sessions (sessions are JWT/Redis based).</li>
+<li><strong>Circuit Breakers:</strong> If OpenAI APIs fail consecutively, the system falls back to manual entry workflows rather than hanging the application.</li>
+</ul>
+<hr />
+<h2>25. Disaster Recovery Strategy</h2>
+<ul>
+<li><strong>RPO (Recovery Point Objective):</strong> 1 Hour.</li>
+<li><strong>RTO (Recovery Time Objective):</strong> 4 Hours.</li>
+<li><strong>Strategy:</strong> Automated daily snapshots of PostgreSQL database retained for 30 days. Infrastructure-as-code (GitHub Actions) allows immediate redeployment of the application stack to an alternate region if needed.</li>
+</ul>
+<hr />
+<h2>26. API Architecture</h2>
+<ul>
+<li><strong>Style:</strong> RESTful.</li>
+<li><strong>Format:</strong> JSON payloads.</li>
+<li><strong>Versioning:</strong> URI versioning (e.g., <code>/api/v1/products</code>).</li>
+<li><strong>Documentation:</strong> Swagger/OpenAPI specification generated automatically.</li>
+</ul>
+<hr />
+<h2>27. Database Architecture</h2>
+<ul>
+<li><strong>System:</strong> PostgreSQL.</li>
+<li><strong>Table Grouping:</strong> <ul>
+<li><em>Identity Group:</em> Users, Roles, Permissions, Vendors.</li>
+<li><em>Catalog Group:</em> Products, Categories, Variants, Inventory.</li>
+<li><em>Commerce Group:</em> Orders, Refunds, Customers.</li>
+</ul>
+</li>
+<li><strong>Indexing Strategy:</strong> B-Tree indexes on Primary Keys (UUIDs), Foreign Keys, and frequently queried columns (e.g., <code>sku</code>, <code>email</code>, <code>status</code>).</li>
+<li><strong>Query Optimization:</strong> Use of materialized views for complex AI Sales Analytics dashboards.</li>
+<li><strong>Backup:</strong> Point-in-time recovery (PITR) enabled.</li>
+</ul>
+<hr />
+<h2>28. AI Integration Architecture</h2>
+<p>The <strong>AI Service Layer</strong> acts as an abstraction wrapper around OpenAI and Gemini SDKs.
+*   Abstracts prompt engineering and token management.
+*   Implements caching for identical AI requests to save API costs.
+*   Handles rate limiting imposed by third-party providers.</p>
+<pre><code class="language-mermaid">graph TD
+    Client --&gt;|Request AI Description| API
+    API --&gt;|Queue Request| AIServiceLayer
+    AIServiceLayer --&gt;|Check Cache| Redis
+    Redis -- Miss --&gt; OpenAI[OpenAI API]
+    OpenAI --&gt; AIServiceLayer
+    AIServiceLayer --&gt;|Save to DB &amp; Cache| DB
+    AIServiceLayer --&gt; Client
+</code></pre>
+<hr />
+<h2>29. Module Interaction Diagram (Order Processing)</h2>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant Webhook
+    participant OrderSvc
+    participant InventorySvc
+    participant NotificationSvc
+
+    Webhook-&gt;&gt;OrderSvc: New Order Payload
+    OrderSvc-&gt;&gt;InventorySvc: Deduct Stock
+    alt Stock Available
+        InventorySvc--&gt;&gt;OrderSvc: Confirmed
+        OrderSvc-&gt;&gt;NotificationSvc: Trigger Vendor Email
+    else Out of Stock
+        InventorySvc--&gt;&gt;OrderSvc: Failed - Low Stock
+        OrderSvc-&gt;&gt;NotificationSvc: Trigger Alert Email
+    end
+</code></pre>
+<hr />
+<h2>30. Deployment Flow</h2>
+<ol>
+<li>Developer pushes code to GitHub <code>main</code> branch.</li>
+<li><strong>GitHub Actions CI:</strong> Runs Linting, TypeScript compilation, and Unit Tests.</li>
+<li>If CI passes:<ul>
+<li>Frontend triggers Vercel deployment hook.</li>
+<li>Backend triggers Render deployment hook.</li>
+</ul>
+</li>
+<li>Render pulls latest image, runs database migrations (<code>knex</code> or <code>prisma</code>), and restarts the Node.js service.</li>
+<li>New version is live with zero downtime.</li>
+</ol>
+<hr />
+<p><strong>End of Document</strong></p>

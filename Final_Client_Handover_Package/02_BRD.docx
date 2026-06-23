@@ -1,0 +1,707 @@
+<h1>CommerceIQ AI</h1>
+<h2>Business Requirements Document (BRD)</h2>
+<hr />
+<h2>1. Cover Page</h2>
+<p><strong>Project Name:</strong> CommerceIQ AI
+<strong>Project Type:</strong> AI-Powered E-Commerce Administration &amp; Business Intelligence Platform
+<strong>Document Version:</strong> 1.0
+<strong>Date:</strong> June 24, 2026
+<strong>Prepared By:</strong> Senior Business Analyst &amp; Solution Architect
+<strong>Target Audience:</strong> Project Sponsors, Stakeholders, Product Managers, Development Team, QA Team</p>
+<hr />
+<h2>2. Document Information</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Document Name</strong></td>
+<td style="text-align: left;">CommerceIQ AI Business Requirements Document</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Project Name</strong></td>
+<td style="text-align: left;">CommerceIQ AI</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Document Owner</strong></td>
+<td style="text-align: left;">Product Owner / Senior BA</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Status</strong></td>
+<td style="text-align: left;">Draft</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Creation Date</strong></td>
+<td style="text-align: left;">2026-06-24</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Last Modified Date</strong></td>
+<td style="text-align: left;">2026-06-24</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>3. Revision History</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Date</th>
+<th style="text-align: left;">Author</th>
+<th style="text-align: left;">Description of Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1.0</td>
+<td style="text-align: left;">2026-06-24</td>
+<td style="text-align: left;">Senior BA</td>
+<td style="text-align: left;">Initial BRD creation based on stakeholder requirements</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>4. Approval Matrix</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Role / Title</th>
+<th style="text-align: left;">Signature</th>
+<th style="text-align: left;">Date</th>
+<th style="text-align: left;">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">[Name]</td>
+<td style="text-align: left;">Chief Executive Officer (CEO)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Pending</td>
+</tr>
+<tr>
+<td style="text-align: left;">[Name]</td>
+<td style="text-align: left;">Chief Technology Officer (CTO)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Pending</td>
+</tr>
+<tr>
+<td style="text-align: left;">[Name]</td>
+<td style="text-align: left;">Product Manager</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Pending</td>
+</tr>
+<tr>
+<td style="text-align: left;">[Name]</td>
+<td style="text-align: left;">Lead Architect</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Pending</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>5. Executive Summary</h2>
+<p>CommerceIQ AI is a next-generation, AI-powered e-commerce administration and Business Intelligence (BI) platform designed to streamline operations, enhance decision-making, and automate repetitive tasks. By integrating advanced AI services (OpenAI, Gemini), the platform empowers e-commerce businesses to optimize product listings, forecast inventory, analyze customer sentiment, and derive actionable sales analytics. The platform serves administrators, vendors, and business analysts through a centralized, highly scalable web application built on modern web technologies.</p>
+<hr />
+<h2>6. Business Background</h2>
+<p>Modern e-commerce operations require analyzing vast amounts of data, managing complex inventories, and continuously optimizing digital storefronts. Traditional admin panels lack intelligent automation, leaving store owners and vendors reliant on manual data analysis, manual product description writing, and reactive inventory management. There is a market gap for a unified, intelligent SaaS platform that not only manages standard e-commerce operations but actively assists users through AI-driven insights and automation.</p>
+<hr />
+<h2>7. Problem Statement</h2>
+<p>E-commerce managers and vendors currently face the following challenges:
+*   <strong>Time-Consuming Catalog Management:</strong> Writing SEO-optimized product descriptions and categorizing products is manual and slow.
+*   <strong>Inefficient Inventory Management:</strong> Lack of predictive forecasting leads to overstocking or stockouts.
+*   <strong>Data Overload:</strong> Difficulty in extracting actionable insights from sales and customer data without dedicated data analysts.
+*   <strong>Reactive Customer Service:</strong> Inability to quickly synthesize and respond to customer reviews and sentiment trends.</p>
+<hr />
+<h2>8. Business Objectives</h2>
+<ul>
+<li><strong>Automate Content Creation:</strong> Reduce product cataloging time by 70% using AI-generated product descriptions.</li>
+<li><strong>Optimize Inventory:</strong> Decrease stockouts by 30% through AI-driven inventory forecasting within the first 6 months.</li>
+<li><strong>Enhance Decision Making:</strong> Provide real-time, AI-driven sales analytics and actionable business recommendations.</li>
+<li><strong>Improve Customer Satisfaction:</strong> Utilize AI sentiment analysis to proactively identify and address product issues highlighted in customer reviews.</li>
+</ul>
+<hr />
+<h2>9. Scope Definition</h2>
+<h3>In Scope</h3>
+<ul>
+<li>Development of a responsive web-based admin portal (Next.js, Tailwind CSS).</li>
+<li>Backend API development (Node.js, Express.js) with a robust PostgreSQL database.</li>
+<li>Implementation of Role-Based Access Control (RBAC) utilizing JWT.</li>
+<li>Integration of AI modules via OpenAI API and Gemini API for content generation, forecasting, and sentiment analysis.</li>
+<li>Standard business modules: User, Vendor, Product, Category, Inventory, Order, Refund, and Customer Management.</li>
+<li>Comprehensive BI Dashboards and Reporting.</li>
+</ul>
+<h3>Out of Scope</h3>
+<ul>
+<li>Customer-facing storefront (B2C shopping app/website).</li>
+<li>Payment gateway integration for end-customer purchases (platform assumes orders are ingested from external storefronts).</li>
+<li>Physical warehouse robotics integration.</li>
+<li>Mobile application development (iOS/Android).</li>
+</ul>
+<hr />
+<h2>10. Stakeholder Analysis</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Stakeholder</th>
+<th style="text-align: left;">Role</th>
+<th style="text-align: left;">Interests &amp; Expectations</th>
+<th style="text-align: left;">Influence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Executive Sponsors</strong></td>
+<td style="text-align: left;">Funding &amp; Strategic Direction</td>
+<td style="text-align: left;">High ROI, market competitiveness, successful deployment</td>
+<td style="text-align: left;">High</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Product Manager</strong></td>
+<td style="text-align: left;">Product Vision &amp; Roadmap</td>
+<td style="text-align: left;">Timely delivery, feature completeness, user adoption</td>
+<td style="text-align: left;">High</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Platform Admins</strong></td>
+<td style="text-align: left;">Day-to-day operations oversight</td>
+<td style="text-align: left;">Ease of use, comprehensive controls, system reliability</td>
+<td style="text-align: left;">High</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Vendors / Sellers</strong></td>
+<td style="text-align: left;">Managing their own products/orders</td>
+<td style="text-align: left;">Increased sales, easy product onboarding, accurate forecasting</td>
+<td style="text-align: left;">Medium</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Development Team</strong></td>
+<td style="text-align: left;">Implementation</td>
+<td style="text-align: left;">Clear requirements, modern tech stack, architectural scalability</td>
+<td style="text-align: left;">Medium</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>11. User Personas</h2>
+<ol>
+<li><strong>Super Admin (Alice):</strong> Needs full visibility across the platform to manage vendors, monitor global sales, and configure system settings. Wants AI insights to guide overall platform strategy.</li>
+<li><strong>Vendor (Bob):</strong> Needs an intuitive interface to add products, process orders, and manage inventory. Highly values the AI Product Description Generator to save time.</li>
+<li><strong>Business Analyst (Charlie):</strong> Requires access to deep analytics, AI Sales Analytics, and custom reporting tools to identify trends and present findings to management.</li>
+</ol>
+<hr />
+<h2>12. Business Requirements</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Req ID</th>
+<th style="text-align: left;">Requirement Name</th>
+<th style="text-align: left;">Priority</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Business Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">BR-01</td>
+<td style="text-align: left;">AI Content Automation</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">The system must automate product descriptions using AI.</td>
+<td style="text-align: left;">Reduces manual effort and standardizes catalog quality.</td>
+</tr>
+<tr>
+<td style="text-align: left;">BR-02</td>
+<td style="text-align: left;">Multi-tenant Vendor Support</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">The platform must allow multiple vendors to manage their distinct catalogs and orders.</td>
+<td style="text-align: left;">Enables a marketplace model, increasing platform revenue.</td>
+</tr>
+<tr>
+<td style="text-align: left;">BR-03</td>
+<td style="text-align: left;">Predictive Analytics</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">The platform must forecast inventory needs based on historical data.</td>
+<td style="text-align: left;">Prevents revenue loss from stockouts and reduces holding costs.</td>
+</tr>
+<tr>
+<td style="text-align: left;">BR-04</td>
+<td style="text-align: left;">Secure Authentication</td>
+<td style="text-align: left;">Critical</td>
+<td style="text-align: left;">Implement robust JWT + Refresh Token authentication.</td>
+<td style="text-align: left;">Protects sensitive commercial and PII data.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>13. Functional Requirements</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Req ID</th>
+<th style="text-align: left;">Requirement Name</th>
+<th style="text-align: left;">Priority</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Business Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">FR-01</td>
+<td style="text-align: left;">User Registration &amp; Login</td>
+<td style="text-align: left;">Critical</td>
+<td style="text-align: left;">System shall allow users to register and login using email/password with JWT issuing.</td>
+<td style="text-align: left;">Foundation for secure access control.</td>
+</tr>
+<tr>
+<td style="text-align: left;">FR-02</td>
+<td style="text-align: left;">Vendor Onboarding</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">System shall provide a workflow for Super Admins to approve/reject new vendor applications.</td>
+<td style="text-align: left;">Maintains platform quality and trust.</td>
+</tr>
+<tr>
+<td style="text-align: left;">FR-03</td>
+<td style="text-align: left;">Product CRUD</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Vendors shall be able to Create, Read, Update, and Delete their products.</td>
+<td style="text-align: left;">Core operational capability for vendors.</td>
+</tr>
+<tr>
+<td style="text-align: left;">FR-04</td>
+<td style="text-align: left;">Order Status Management</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">System shall allow updating order status (e.g., Pending, Shipped, Delivered).</td>
+<td style="text-align: left;">Necessary for fulfillment tracking.</td>
+</tr>
+<tr>
+<td style="text-align: left;">FR-05</td>
+<td style="text-align: left;">Refund Processing</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">System shall allow logging and updating the status of customer refunds.</td>
+<td style="text-align: left;">Ensures accurate financial tracking and customer service.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>14. Non-Functional Requirements</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Req ID</th>
+<th style="text-align: left;">Requirement Name</th>
+<th style="text-align: left;">Priority</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Business Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">NFR-01</td>
+<td style="text-align: left;">Performance</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Dashboard must load within 2 seconds under normal load.</td>
+<td style="text-align: left;">Ensures a smooth, professional user experience.</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-02</td>
+<td style="text-align: left;">Scalability</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Backend architecture must handle up to 10,000 concurrent users.</td>
+<td style="text-align: left;">Accommodates business growth without system redesign.</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-03</td>
+<td style="text-align: left;">Availability</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">The platform must achieve 99.9% uptime.</td>
+<td style="text-align: left;">Prevents business interruption for administrators and vendors.</td>
+</tr>
+<tr>
+<td style="text-align: left;">NFR-04</td>
+<td style="text-align: left;">Maintainability</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">Code must be fully typed (TypeScript) and modular.</td>
+<td style="text-align: left;">Reduces future technical debt for the 5-member dev team.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>15. Business Rules</h2>
+<ul>
+<li><strong>BRU-01:</strong> A Vendor can only view, edit, and delete products that belong to their specific account.</li>
+<li><strong>BRU-02:</strong> AI API calls (OpenAI/Gemini) must be rate-limited per vendor to manage platform costs.</li>
+<li><strong>BRU-03:</strong> Refunds can only be processed if the order status is 'Delivered' or 'Returned'.</li>
+<li><strong>BRU-04:</strong> Passwords must meet complexity requirements (min 8 chars, 1 uppercase, 1 number, 1 special character).</li>
+</ul>
+<hr />
+<h2>16. Assumptions</h2>
+<ul>
+<li>External e-commerce storefronts will push orders into this platform via standard REST APIs.</li>
+<li>The 5-member team has the necessary skills in Next.js, Node.js, and AI integrations.</li>
+<li>OpenAI and Gemini APIs will remain available and within the projected operational budget.</li>
+</ul>
+<hr />
+<h2>17. Constraints</h2>
+<ul>
+<li><strong>Time Constraint:</strong> The initial MVP must be delivered within the agreed 4-month timeline.</li>
+<li><strong>Resource Constraint:</strong> Development is limited to the current 5-member team.</li>
+<li><strong>Technology Constraint:</strong> Must deploy exclusively on Vercel (Frontend) and Render (Backend) to minimize DevOps overhead.</li>
+</ul>
+<hr />
+<h2>18. Risk Analysis</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Risk ID</th>
+<th style="text-align: left;">Risk Description</th>
+<th style="text-align: left;">Probability</th>
+<th style="text-align: left;">Impact</th>
+<th style="text-align: left;">Mitigation Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">RSK-01</td>
+<td style="text-align: left;">AI API Downtime / Latency</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Implement fallback mechanisms, caching, and failover between OpenAI and Gemini.</td>
+</tr>
+<tr>
+<td style="text-align: left;">RSK-02</td>
+<td style="text-align: left;">Data Privacy Breaches</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">Critical</td>
+<td style="text-align: left;">Ensure strict PostgreSQL access controls, JWT security, and encryption at rest/transit.</td>
+</tr>
+<tr>
+<td style="text-align: left;">RSK-03</td>
+<td style="text-align: left;">Scope Creep on AI Features</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">Strictly adhere to the approved MVP feature list. Use agile sprint planning to manage backlog.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>19. User Roles &amp; Permissions</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Role</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Key Permissions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Super Admin</strong></td>
+<td style="text-align: left;">Platform Owner</td>
+<td style="text-align: left;">Full CRUD on all modules, Vendor Approval, Global Analytics, AI Config.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Vendor Admin</strong></td>
+<td style="text-align: left;">Store Owner</td>
+<td style="text-align: left;">CRUD on own Products, Inventory, Orders. View own Analytics &amp; AI insights.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Analyst</strong></td>
+<td style="text-align: left;">Data professional</td>
+<td style="text-align: left;">Read-only access to Global Analytics, Custom Reporting, AI Sales Analytics.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Support Staff</strong></td>
+<td style="text-align: left;">Customer Service</td>
+<td style="text-align: left;">View Orders, Manage Refunds, View Customer Profiles, View Review Sentiments.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>20. Process Flow Diagrams (Mermaid)</h2>
+<p>```mermaid
+graph TD
+    A[Vendor Logs In] --&gt; B{Action?}
+    B --&gt;|Add Product| C[Enter Basic Details]
+    C --&gt; D[Click 'Generate AI Description']
+    D --&gt; E[Backend calls OpenAI/Gemini]
+    E --&gt; F[AI Returns Optimized Description]
+    F --&gt; G[Vendor Reviews &amp; Saves]
+    G --&gt; H[Saved to PostgreSQL]</p>
+<pre><code>B --&gt;|View Dashboard| I[Load AI Sales Analytics]
+I --&gt; J[Display Charts &amp; Insights]
+</code></pre>
+<p>```</p>
+<hr />
+<h2>21. High-Level Business Workflow</h2>
+<ol>
+<li><strong>Vendor Registration:</strong> Vendor signs up; Super Admin approves the account.</li>
+<li><strong>Catalog Creation:</strong> Vendor utilizes the AI Product Description Generator to quickly build their catalog.</li>
+<li><strong>Order Ingestion:</strong> Orders flow into the system from external storefronts.</li>
+<li><strong>Fulfillment &amp; Inventory:</strong> Vendor processes orders. AI Inventory Forecasting alerts the vendor when stock is running low based on predictive trends.</li>
+<li><strong>Customer Feedback:</strong> Reviews are ingested; AI Sentiment Analysis categorizes them into Positive/Neutral/Negative.</li>
+<li><strong>Business Strategy:</strong> Vendors and Admins review the AI Business Recommendation Engine to optimize pricing and marketing.</li>
+</ol>
+<hr />
+<h2>22. Use Cases</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Use Case ID</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Actor</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">UC-01</td>
+<td style="text-align: left;">Generate Product Description</td>
+<td style="text-align: left;">Vendor</td>
+<td style="text-align: left;">Vendor inputs product name and keywords; AI generates a full SEO description.</td>
+</tr>
+<tr>
+<td style="text-align: left;">UC-02</td>
+<td style="text-align: left;">Predict Stock Requirements</td>
+<td style="text-align: left;">Vendor</td>
+<td style="text-align: left;">Vendor views inventory dashboard; AI highlights items likely to stock out in 30 days.</td>
+</tr>
+<tr>
+<td style="text-align: left;">UC-03</td>
+<td style="text-align: left;">Analyze Global Sales</td>
+<td style="text-align: left;">Analyst</td>
+<td style="text-align: left;">Analyst queries platform for Q3 sales trends; AI generates a natural language summary.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>23. User Stories</h2>
+<ul>
+<li><strong>US-01:</strong> As a Vendor, I want to click a button to generate an AI product description so that I can list items faster.</li>
+<li><strong>US-02:</strong> As a Super Admin, I want to see a dashboard of AI-generated business recommendations so that I can identify new revenue opportunities.</li>
+<li><strong>US-03:</strong> As Support Staff, I want to see an AI sentiment score next to customer profiles so that I can prioritize unhappy customers.</li>
+</ul>
+<hr />
+<h2>24. Acceptance Criteria</h2>
+<ul>
+<li><strong>For US-01 (AI Description):</strong> <ul>
+<li>Given the user is on the Add Product page, when they enter "Wireless Mouse" and click "Generate", then a description of at least 100 words is populated in the text box within 5 seconds.</li>
+</ul>
+</li>
+<li><strong>For US-03 (Sentiment):</strong> <ul>
+<li>Given a customer review is submitted, when the system processes it, then it is tagged as Positive, Neutral, or Negative with &gt;85% confidence.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2>25. Success Metrics (KPIs)</h2>
+<ul>
+<li><strong>Time to Market:</strong> Average time to list a new product is reduced by 50%.</li>
+<li><strong>Inventory Accuracy:</strong> Number of 'Out of Stock' incidents decreases by 20% month-over-month.</li>
+<li><strong>System Usage:</strong> AI feature utilization rate &gt; 70% among active vendors.</li>
+<li><strong>Performance:</strong> API response times average &lt; 300ms.</li>
+</ul>
+<hr />
+<h2>26. Reporting Requirements</h2>
+<ul>
+<li><strong>Daily Sales Report:</strong> Aggregated sales volume, revenue, and top-selling products (exportable to CSV/PDF).</li>
+<li><strong>Inventory Health Report:</strong> Current stock levels, holding costs, and AI-predicted stockout dates.</li>
+<li><strong>Vendor Performance:</strong> Comparative analytics showing revenue generation per vendor.</li>
+</ul>
+<hr />
+<h2>27. Notification Requirements</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Notification Type</th>
+<th style="text-align: left;">Trigger</th>
+<th style="text-align: left;">Channel</th>
+<th style="text-align: left;">Target Audience</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Low Stock Alert</td>
+<td style="text-align: left;">Inventory drops below AI-predicted safety threshold</td>
+<td style="text-align: left;">In-App / Email</td>
+<td style="text-align: left;">Vendor Admin</td>
+</tr>
+<tr>
+<td style="text-align: left;">New Order Received</td>
+<td style="text-align: left;">Order ingested into the system</td>
+<td style="text-align: left;">In-App</td>
+<td style="text-align: left;">Vendor Admin</td>
+</tr>
+<tr>
+<td style="text-align: left;">Negative Sentiment Spike</td>
+<td style="text-align: left;">AI detects &gt;10 negative reviews in 1 hour</td>
+<td style="text-align: left;">Email</td>
+<td style="text-align: left;">Support Staff / Super Admin</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>28. Audit &amp; Compliance Requirements</h2>
+<ul>
+<li><strong>Action Logging:</strong> All CRUD operations on Users, Vendors, and Orders must be logged with timestamp and user ID.</li>
+<li><strong>Data Retention:</strong> Audit logs must be retained in PostgreSQL for a minimum of 1 year.</li>
+<li><strong>GDPR/CCPA Compliance:</strong> Implement features for user data export and "Right to be Forgotten" (data anonymization/deletion).</li>
+</ul>
+<hr />
+<h2>29. Security Requirements</h2>
+<ul>
+<li><strong>Authentication:</strong> Passwords must be hashed using bcrypt. Access must be governed by JWT access tokens (short-lived) and refresh tokens (HTTP-only cookies).</li>
+<li><strong>API Security:</strong> Express backend must implement Helmet.js, CORS policies, and rate-limiting to prevent DDoS and brute force attacks.</li>
+<li><strong>Data Encryption:</strong> All data in transit must use HTTPS/TLS 1.2+.</li>
+</ul>
+<hr />
+<h2>30. AI Features Requirements</h2>
+<h3>30.1 AI Product Description Generator</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Req ID</th>
+<th style="text-align: left;">Requirement Name</th>
+<th style="text-align: left;">Priority</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Business Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">AI-01</td>
+<td style="text-align: left;">Prompt Engineering</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Backend must format user inputs (title, keywords) into a structured prompt for OpenAI/Gemini.</td>
+<td style="text-align: left;">Ensures consistent, high-quality output.</td>
+</tr>
+<tr>
+<td style="text-align: left;">AI-02</td>
+<td style="text-align: left;">SEO Optimization</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">The AI must be instructed to generate SEO-friendly content with relevant H1/H2 tags if requested.</td>
+<td style="text-align: left;">Improves organic discovery of vendor products.</td>
+</tr>
+</tbody>
+</table>
+<h3>30.2 AI Sales Analytics</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Req ID</th>
+<th style="text-align: left;">Requirement Name</th>
+<th style="text-align: left;">Priority</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Business Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">AI-03</td>
+<td style="text-align: left;">Natural Language Querying</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">Allow users to ask "What were my top products last week?" and receive a data-backed answer.</td>
+<td style="text-align: left;">Democratizes data access for non-technical users.</td>
+</tr>
+<tr>
+<td style="text-align: left;">AI-04</td>
+<td style="text-align: left;">Trend Identification</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">AI must analyze historical PostgreSQL sales data to identify emerging trends and anomalies.</td>
+<td style="text-align: left;">Proactive business intelligence.</td>
+</tr>
+</tbody>
+</table>
+<h3>30.3 AI Inventory Forecasting</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Req ID</th>
+<th style="text-align: left;">Requirement Name</th>
+<th style="text-align: left;">Priority</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Business Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">AI-05</td>
+<td style="text-align: left;">Demand Prediction</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Utilize historical sales velocity and seasonality data to predict future stock requirements.</td>
+<td style="text-align: left;">Optimizes supply chain and cash flow.</td>
+</tr>
+<tr>
+<td style="text-align: left;">AI-06</td>
+<td style="text-align: left;">Reorder Point Calculation</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">AI suggests dynamic reorder points based on lead times and forecasted demand.</td>
+<td style="text-align: left;">Automates procurement workflows.</td>
+</tr>
+</tbody>
+</table>
+<h3>30.4 AI Customer Review Sentiment Analysis</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Req ID</th>
+<th style="text-align: left;">Requirement Name</th>
+<th style="text-align: left;">Priority</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Business Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">AI-07</td>
+<td style="text-align: left;">Automated Tagging</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">All incoming reviews must be processed by the AI and tagged (Positive/Neutral/Negative).</td>
+<td style="text-align: left;">Enables quick triage of customer issues.</td>
+</tr>
+<tr>
+<td style="text-align: left;">AI-08</td>
+<td style="text-align: left;">Insight Extraction</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">AI must extract key themes from reviews (e.g., "Shipping delay", "Great quality").</td>
+<td style="text-align: left;">Identifies systemic product or operational issues.</td>
+</tr>
+</tbody>
+</table>
+<h3>30.5 AI Business Recommendation Engine</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Req ID</th>
+<th style="text-align: left;">Requirement Name</th>
+<th style="text-align: left;">Priority</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Business Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">AI-09</td>
+<td style="text-align: left;">Actionable Insights</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">System generates specific recommendations (e.g., "Bundle Product A and B", "Apply a 10% discount to slow-moving Product C").</td>
+<td style="text-align: left;">Drives revenue growth and strategic decision-making.</td>
+</tr>
+<tr>
+<td style="text-align: left;">AI-10</td>
+<td style="text-align: left;">Performance Tracking</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">Track the adoption and success rate of implemented AI recommendations.</td>
+<td style="text-align: left;">Validates the ROI of the AI integrations.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>End of Document</strong></p>

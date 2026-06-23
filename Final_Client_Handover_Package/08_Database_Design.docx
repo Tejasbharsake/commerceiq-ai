@@ -1,0 +1,260 @@
+<h1>CommerceIQ AI</h1>
+<h2>Enterprise Database Design &amp; ERD Document</h2>
+<hr />
+<h2>1. Document Information</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Document Name</strong></td>
+<td style="text-align: left;">Enterprise Database Design &amp; ERD Document</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Project Name</strong></td>
+<td style="text-align: left;">CommerceIQ AI</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Database Engine</strong></td>
+<td style="text-align: left;">PostgreSQL (Relational)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Architecture</strong></td>
+<td style="text-align: left;">Multi-Tenant SaaS Architecture</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Document Owner</strong></td>
+<td style="text-align: left;">Senior Database Architect</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. Standard Audit Columns</h2>
+<p>Every table in this database strictly adheres to the following audit and soft-delete structure:
+*   <code>id</code>: UUID (Primary Key)
+*   <code>created_at</code>: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+*   <code>updated_at</code>: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+*   <code>created_by</code>: UUID (Foreign Key -&gt; Users.id)
+*   <code>updated_by</code>: UUID (Foreign Key -&gt; Users.id)
+*   <code>is_active</code>: BOOLEAN DEFAULT TRUE
+*   <code>is_deleted</code>: BOOLEAN DEFAULT FALSE (Soft Delete Support)</p>
+<hr />
+<h2>3. Entity Relationship Diagram (Crow's Foot / Mermaid Format)</h2>
+<pre><code class="language-mermaid">erDiagram
+    %% AUTHENTICATION MODULE
+    USERS ||--o{ REFRESH_TOKENS : has
+    USERS ||--o{ USER_ROLES : assigned_to
+    ROLES ||--o{ USER_ROLES : belongs_to
+    ROLES ||--o{ ROLE_PERMISSIONS : has
+    PERMISSIONS ||--o{ ROLE_PERMISSIONS : belongs_to
+
+    %% VENDOR MANAGEMENT
+    VENDORS ||--o{ VENDOR_ADDRESSES : has
+    VENDORS ||--o{ VENDOR_DOCUMENTS : submits
+    VENDORS ||--o| VENDOR_PERFORMANCE : tracked_by
+    USERS ||--o| VENDORS : manages
+
+    %% PRODUCT MANAGEMENT
+    VENDORS ||--o{ PRODUCTS : sells
+    CATEGORIES ||--o{ SUB_CATEGORIES : contains
+    CATEGORIES ||--o{ PRODUCTS : categorizes
+    PRODUCTS ||--o{ PRODUCT_IMAGES : displays
+    PRODUCTS ||--o{ PRODUCT_VARIANTS : has
+    PRODUCTS ||--o{ PRODUCT_ATTRIBUTES : possesses
+    PRODUCT_ATTRIBUTES ||--o{ PRODUCT_ATTRIBUTE_VALUES : defines
+
+    %% INVENTORY MANAGEMENT
+    PRODUCTS ||--o{ INVENTORY : stocked_as
+    WAREHOUSES ||--o{ INVENTORY : stores
+    INVENTORY ||--o{ INVENTORY_TRANSACTIONS : logs
+    INVENTORY ||--o{ STOCK_ALERTS : triggers
+
+    %% CUSTOMER MANAGEMENT
+    CUSTOMERS ||--o{ CUSTOMER_ADDRESSES : has
+    CUSTOMERS ||--o{ CUSTOMER_PREFERENCES : sets
+    CUSTOMERS ||--o{ WISHLIST : adds_to
+    USERS ||--o| CUSTOMERS : maps_to
+
+    %% ORDER MANAGEMENT
+    CUSTOMERS ||--o{ ORDERS : places
+    ORDERS ||--|{ ORDER_ITEMS : contains
+    PRODUCTS ||--o{ ORDER_ITEMS : included_in
+    ORDERS ||--o| PAYMENTS : processed_by
+    ORDERS ||--o| SHIPPING_DETAILS : shipped_via
+    ORDERS ||--o{ ORDER_STATUS_HISTORY : tracks
+
+    %% REFUND MANAGEMENT
+    ORDERS ||--o{ REFUND_REQUESTS : initiates
+    REFUND_REQUESTS ||--o| REFUND_TRANSACTIONS : executes
+    REFUND_REASONS ||--o{ REFUND_REQUESTS : justifies
+
+    %% REVIEW MANAGEMENT
+    PRODUCTS ||--o{ REVIEWS : receives
+    CUSTOMERS ||--o{ REVIEWS : writes
+    REVIEWS ||--o{ REVIEW_REPLIES : gets
+    REVIEWS ||--o| REVIEW_SENTIMENTS : analyzed_as
+
+    %% NOTIFICATIONS &amp; AUDIT &amp; AI
+    USERS ||--o{ NOTIFICATIONS : receives
+    NOTIFICATIONS }o--|| NOTIFICATION_TEMPLATES : formatted_by
+    USERS ||--o{ AUDIT_LOGS : performs
+    USERS ||--o{ AI_REQUESTS : initiates
+    AI_REQUESTS ||--o| AI_RESPONSES : yields
+</code></pre>
+<hr />
+<h2>4. Entity Definitions &amp; Table Designs</h2>
+<p><em>(Note: Standard audit columns defined in Section 2 are omitted below for brevity but are required on all tables).</em></p>
+<h3>4.1 Authentication Module</h3>
+<ul>
+<li><strong>Users</strong>: Stores login credentials. (Columns: <code>email</code> VARCHAR UNIQUE, <code>password_hash</code> VARCHAR, <code>last_login</code> TIMESTAMP).</li>
+<li><strong>Roles</strong>: System roles. (Columns: <code>name</code> VARCHAR UNIQUE, <code>description</code> TEXT).</li>
+<li><strong>UserRoles</strong>: Junction table. (Columns: <code>user_id</code> UUID FK, <code>role_id</code> UUID FK. Composite PK: <code>user_id, role_id</code>).</li>
+<li><strong>Permissions</strong>: Granular actions. (Columns: <code>action_name</code> VARCHAR UNIQUE).</li>
+<li><strong>RolePermissions</strong>: Junction table. (Columns: <code>role_id</code> UUID FK, <code>permission_id</code> UUID FK).</li>
+<li><strong>RefreshTokens</strong>: Session management. (Columns: <code>user_id</code> UUID FK, <code>token</code> VARCHAR UNIQUE, <code>expires_at</code> TIMESTAMP).</li>
+</ul>
+<h3>4.2 Vendor Management</h3>
+<ul>
+<li><strong>Vendors</strong>: Vendor business profiles. (Columns: <code>user_id</code> UUID FK UNIQUE, <code>business_name</code> VARCHAR, <code>tax_id</code> VARCHAR UNIQUE).</li>
+<li><strong>VendorAddresses</strong>: Locations. (Columns: <code>vendor_id</code> UUID FK, <code>address_line1</code> VARCHAR, <code>city</code> VARCHAR, <code>type</code> VARCHAR).</li>
+<li><strong>VendorDocuments</strong>: KYC/Legal. (Columns: <code>vendor_id</code> UUID FK, <code>document_url</code> VARCHAR, <code>status</code> VARCHAR).</li>
+<li><strong>VendorPerformance</strong>: Metrics. (Columns: <code>vendor_id</code> UUID FK UNIQUE, <code>rating</code> DECIMAL, <code>fulfillment_rate</code> DECIMAL).</li>
+</ul>
+<h3>4.3 Product Management</h3>
+<ul>
+<li><strong>Categories</strong>: Top-level tax. (Columns: <code>name</code> VARCHAR, <code>slug</code> VARCHAR UNIQUE).</li>
+<li><strong>SubCategories</strong>: Lower tax. (Columns: <code>category_id</code> UUID FK, <code>name</code> VARCHAR).</li>
+<li><strong>Products</strong>: Core catalog. (Columns: <code>vendor_id</code> UUID FK, <code>category_id</code> UUID FK, <code>title</code> VARCHAR, <code>sku</code> VARCHAR UNIQUE, <code>price</code> DECIMAL, <code>description</code> TEXT).</li>
+<li><strong>ProductImages</strong>: (Columns: <code>product_id</code> UUID FK, <code>image_url</code> VARCHAR, <code>is_primary</code> BOOLEAN).</li>
+<li><strong>ProductVariants</strong>: (Columns: <code>product_id</code> UUID FK, <code>variant_name</code> VARCHAR, <code>price_adjustment</code> DECIMAL).</li>
+<li><strong>ProductAttributes</strong>: (Columns: <code>product_id</code> UUID FK, <code>attribute_name</code> VARCHAR).</li>
+<li><strong>ProductAttributeValues</strong>: (Columns: <code>attribute_id</code> UUID FK, <code>value</code> VARCHAR).</li>
+</ul>
+<h3>4.4 Inventory Management</h3>
+<ul>
+<li><strong>Warehouses</strong>: Storage locations. (Columns: <code>name</code> VARCHAR, <code>location</code> VARCHAR).</li>
+<li><strong>Inventory</strong>: Stock counts. (Columns: <code>product_id</code> UUID FK, <code>warehouse_id</code> UUID FK, <code>quantity</code> INT. Unique: <code>product_id, warehouse_id</code>).</li>
+<li><strong>InventoryTransactions</strong>: Log of +/- stock. (Columns: <code>inventory_id</code> UUID FK, <code>change_qty</code> INT, <code>type</code> VARCHAR, <code>reference_id</code> UUID).</li>
+<li><strong>StockAlerts</strong>: (Columns: <code>inventory_id</code> UUID FK, <code>threshold</code> INT, <code>status</code> VARCHAR).</li>
+</ul>
+<h3>4.5 Customer &amp; Order Management</h3>
+<ul>
+<li><strong>Customers</strong>: Profiles. (Columns: <code>user_id</code> UUID FK UNIQUE, <code>first_name</code> VARCHAR, <code>last_name</code> VARCHAR, <code>phone</code> VARCHAR).</li>
+<li><strong>CustomerAddresses</strong>: (Columns: <code>customer_id</code> UUID FK, <code>address</code> TEXT, <code>is_default</code> BOOLEAN).</li>
+<li><strong>Orders</strong>: Sales records. (Columns: <code>customer_id</code> UUID FK, <code>total_amount</code> DECIMAL, <code>status</code> VARCHAR).</li>
+<li><strong>OrderItems</strong>: Line items. (Columns: <code>order_id</code> UUID FK, <code>product_id</code> UUID FK, <code>quantity</code> INT, <code>unit_price</code> DECIMAL).</li>
+<li><strong>Payments</strong>: Transacts. (Columns: <code>order_id</code> UUID FK UNIQUE, <code>transaction_id</code> VARCHAR UNIQUE, <code>amount</code> DECIMAL, <code>status</code> VARCHAR).</li>
+<li><strong>ShippingDetails</strong>: (Columns: <code>order_id</code> UUID FK UNIQUE, <code>tracking_number</code> VARCHAR, <code>carrier</code> VARCHAR).</li>
+</ul>
+<h3>4.6 Refund &amp; Review Management</h3>
+<ul>
+<li><strong>RefundRequests</strong>: (Columns: <code>order_id</code> UUID FK, <code>reason_id</code> UUID FK, <code>status</code> VARCHAR, <code>amount</code> DECIMAL).</li>
+<li><strong>RefundTransactions</strong>: (Columns: <code>refund_request_id</code> UUID FK UNIQUE, <code>gateway_ref</code> VARCHAR).</li>
+<li><strong>Reviews</strong>: (Columns: <code>product_id</code> UUID FK, <code>customer_id</code> UUID FK, <code>rating</code> INT, <code>comment</code> TEXT).</li>
+<li><strong>ReviewSentiments</strong>: AI output. (Columns: <code>review_id</code> UUID FK UNIQUE, <code>sentiment_score</code> DECIMAL, <code>label</code> VARCHAR).</li>
+</ul>
+<h3>4.7 Notification, Audit &amp; AI Modules</h3>
+<ul>
+<li><strong>Notifications</strong>: (Columns: <code>user_id</code> UUID FK, <code>message</code> TEXT, <code>is_read</code> BOOLEAN).</li>
+<li><strong>AuditLogs</strong>: (Columns: <code>user_id</code> UUID FK, <code>action</code> VARCHAR, <code>table_name</code> VARCHAR, <code>record_id</code> UUID, <code>old_data</code> JSONB, <code>new_data</code> JSONB).</li>
+<li><strong>AIRequests / AIResponses</strong>: Logs AI usage. (Columns: <code>user_id</code> UUID FK, <code>prompt</code> TEXT, <code>response</code> TEXT, <code>tokens_used</code> INT, <code>service</code> VARCHAR).</li>
+</ul>
+<hr />
+<h2>5. Database Relationship Matrix</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Entity A</th>
+<th style="text-align: left;">Entity B</th>
+<th style="text-align: left;">Relationship Type</th>
+<th style="text-align: left;">Enforcing Constraint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Users</td>
+<td style="text-align: left;">Roles</td>
+<td style="text-align: left;">Many-to-Many</td>
+<td style="text-align: left;">Junction Table (UserRoles)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Vendors</td>
+<td style="text-align: left;">Products</td>
+<td style="text-align: left;">One-to-Many</td>
+<td style="text-align: left;">FK <code>vendor_id</code> on Products</td>
+</tr>
+<tr>
+<td style="text-align: left;">Products</td>
+<td style="text-align: left;">Inventory</td>
+<td style="text-align: left;">One-to-Many</td>
+<td style="text-align: left;">FK <code>product_id</code> on Inventory</td>
+</tr>
+<tr>
+<td style="text-align: left;">Orders</td>
+<td style="text-align: left;">Payments</td>
+<td style="text-align: left;">One-to-One</td>
+<td style="text-align: left;">FK <code>order_id</code> on Payments (UNIQUE)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Reviews</td>
+<td style="text-align: left;">ReviewSentiments</td>
+<td style="text-align: left;">One-to-One</td>
+<td style="text-align: left;">FK <code>review_id</code> on Sentiments (UNIQUE)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>6. Normalization Analysis</h2>
+<ul>
+<li><strong>1NF (First Normal Form):</strong> Achieved. All tables use UUID Primary Keys. Multi-valued attributes (e.g., product images, customer addresses) are separated into dedicated tables.</li>
+<li><strong>2NF (Second Normal Form):</strong> Achieved. There are no partial dependencies. All non-key attributes depend on the entire primary key.</li>
+<li><strong>3NF (Third Normal Form):</strong> Achieved. No transitive dependencies. E.g., <code>City</code> and <code>State</code> are kept in Addresses, not directly in Vendor/Customer profiles. <code>OrderStatusHistory</code> avoids updating rows continuously by appending state changes over time.</li>
+</ul>
+<hr />
+<h2>7. Indexing Strategy</h2>
+<p>To support 100k+ products and 1M+ orders, the following indexing strategies are applied:
+1.  <strong>B-Tree Indexes</strong>: Automatically created on all UUID Primary Keys. Manually applied to all Foreign Keys to speed up <code>JOIN</code> operations.
+2.  <strong>Unique Indexes</strong>: Applied to <code>email</code>, <code>sku</code>, <code>transaction_id</code>.
+3.  <strong>Partial Indexes</strong>: E.g., <code>CREATE INDEX idx_active_products ON Products(id) WHERE is_deleted = FALSE AND is_active = TRUE;</code> to optimize catalog queries.
+4.  <strong>GIN Indexes (JSONB)</strong>: Applied to <code>AuditLogs.old_data</code> and <code>new_data</code> to allow fast searching within JSON unstructured data payloads.
+5.  <strong>Composite Indexes</strong>: <code>CREATE INDEX idx_order_items ON OrderItems(order_id, product_id);</code></p>
+<hr />
+<h2>8. Partitioning Strategy</h2>
+<p>Given the expected 1,000,000+ Orders and 10,000+ daily transactions:
+*   <strong>Range Partitioning (Date-based):</strong> 
+    *   <code>Orders</code>, <code>Payments</code>, and <code>AuditLogs</code> will be partitioned by <code>created_at</code> (e.g., monthly partitions: <code>orders_2026_06</code>, <code>orders_2026_07</code>).
+    *   This ensures old data can be easily archived or queried efficiently without scanning millions of rows.</p>
+<hr />
+<h2>9. Query Optimization Strategy</h2>
+<ul>
+<li><strong>Soft Deletes Handling:</strong> All <code>SELECT</code> queries will use PostgreSQL Views or ORM Global Scopes to automatically append <code>WHERE is_deleted = FALSE</code>.</li>
+<li><strong>Pagination:</strong> Keyset pagination (Cursor-based pagination) using <code>created_at</code> and <code>id</code> to avoid slow <code>OFFSET</code> performance on large tables.</li>
+<li><strong>Materialized Views:</strong> Used for complex dashboards (e.g., <code>VendorDailySales_MV</code>) refreshed concurrently overnight to avoid running heavy <code>SUM()</code> and <code>JOIN</code> operations during peak hours.</li>
+<li><strong>N+1 Problem Prevention:</strong> Enforce <code>JOIN FETCH</code> or <code>Eager Loading</code> in the backend ORM for retrieving Order + OrderItems.</li>
+</ul>
+<hr />
+<h2>10. Database Security Strategy</h2>
+<ul>
+<li><strong>Encryption at Rest:</strong> Handled via Cloud Provider (AWS KMS / Render Managed DB Storage Encryption).</li>
+<li><strong>Encryption in Transit:</strong> <code>sslmode=require</code> enforced on all PostgreSQL connection strings.</li>
+<li><strong>Role-Based DB Access:</strong><ul>
+<li><code>db_admin</code>: DDL access (migrations).</li>
+<li><code>app_user</code>: DML access (SELECT, INSERT, UPDATE). Cannot execute <code>DELETE</code> (app uses soft deletes) or <code>DROP</code>.</li>
+<li><code>readonly_analyst</code>: Can only execute <code>SELECT</code> (used for BI tools like Metabase/Tableau).</li>
+</ul>
+</li>
+<li><strong>Row-Level Security (RLS):</strong> (Optional/Future) Can be enabled on multi-tenant tables to restrict data access at the DB level ensuring <code>vendor_id</code> matches the session variable.</li>
+</ul>
+<hr />
+<h2>11. Backup &amp; Recovery Strategy</h2>
+<ul>
+<li><strong>Continuous Archiving (WAL):</strong> Write-Ahead Logs streamed continuously to cloud storage (S3) to enable Point-in-Time Recovery (PITR) up to the last 5 minutes.</li>
+<li><strong>Automated Backups:</strong> Full logical backups (<code>pg_dump</code>) taken nightly during off-peak hours (02:00 AM UTC). Retained for 30 days.</li>
+<li><strong>Disaster Recovery:</strong> A cross-region read-replica will be maintained asynchronously. In the event of primary region failure, the replica will be promoted to primary (RTO &lt; 2 hours, RPO &lt; 5 mins).</li>
+</ul>
+<hr />
+<p><strong>End of Document</strong></p>

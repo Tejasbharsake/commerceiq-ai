@@ -1,0 +1,476 @@
+<h1>CommerceIQ AI</h1>
+<h2>User Stories &amp; Agile Product Backlog</h2>
+<hr />
+<h2>1. Document Information</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Document Name</strong></td>
+<td style="text-align: left;">User Stories &amp; Agile Product Backlog</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Project Name</strong></td>
+<td style="text-align: left;">CommerceIQ AI</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Project Type</strong></td>
+<td style="text-align: left;">AI-Powered E-Commerce Administration &amp; Business Intelligence Platform</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Methodology</strong></td>
+<td style="text-align: left;">Agile Scrum</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Status</strong></td>
+<td style="text-align: left;">Approved for Sprint Planning</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 1 – Authentication &amp; Authorization</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-001</strong></td>
+<td style="text-align: left;"><strong>As a new user</strong>, I want to register on the platform, so that I can access system features.</td>
+<td style="text-align: left;">• Email must be unique.<br>• Password must meet security requirements.<br>• Account should be created successfully.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-002</strong></td>
+<td style="text-align: left;"><strong>As a registered user</strong>, I want to log in securely, so that I can access my dashboard.</td>
+<td style="text-align: left;">• Valid credentials should generate JWT token.<br>• Invalid credentials should show error.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-003</strong></td>
+<td style="text-align: left;"><strong>As a user</strong>, I want to reset my password, so that I can regain account access.</td>
+<td style="text-align: left;">• Secure reset link sent to email.<br>• Password successfully updated in DB.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 2 – User &amp; Role Management</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-004</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want to create users, so that platform access can be managed.</td>
+<td style="text-align: left;">• Admin can create profiles with explicit credentials.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-005</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want to assign roles and permissions, so that users only access authorized features.</td>
+<td style="text-align: left;">• Roles mapped correctly to user profiles.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-006</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want to control system permissions, so that security policies are enforced.</td>
+<td style="text-align: left;">• RBAC middleware successfully restricts endpoint access.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 3 – Vendor Management</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-007</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want to register on the platform, so that I can sell products.</td>
+<td style="text-align: left;">• Vendor entity created with 'Pending' status.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-008</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want to approve vendor accounts, so that only verified vendors can operate.</td>
+<td style="text-align: left;">• Admin dashboard shows pending queue; status changes to 'Active'.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-009</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want to view sales and inventory metrics, so that I can manage my business.</td>
+<td style="text-align: left;">• Vendor dashboard loads distinct data tied to <code>vendor_id</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 4 – Product Management</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-010</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want to add products, so that customers can purchase them.</td>
+<td style="text-align: left;">• Product saved with SKU, Price, and Category.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-011</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want to edit product information, so that details remain accurate.</td>
+<td style="text-align: left;">• Edits immediately reflected in DB and catalog.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-012</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want to delete/remove inactive products, so that customers only see available items.</td>
+<td style="text-align: left;">• Soft delete flag (<code>is_deleted = true</code>) applied.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-013</strong></td>
+<td style="text-align: left;"><strong>As a User</strong>, I want to search products, so that I can find products quickly.</td>
+<td style="text-align: left;">• Search results return accurate matches under 500ms.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 5 – Inventory Management</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-014</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want to track stock levels, so that inventory remains accurate.</td>
+<td style="text-align: left;">• Live stock updates correctly reflect recent orders.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-015</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want receive low stock alerts, so that I can replenish products on time.</td>
+<td style="text-align: left;">• Notification triggered when stock &lt; threshold.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-016</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want view inventory reports, so that I can make inventory decisions.</td>
+<td style="text-align: left;">• Reports exportable to CSV.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 6 – Order Management</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-017</strong></td>
+<td style="text-align: left;"><strong>As a Customer</strong>, I want to place an order, so that I can receive products.</td>
+<td style="text-align: left;">• Order entity created with correct line items.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-018</strong></td>
+<td style="text-align: left;"><strong>As a Customer</strong>, I want to track my order, so that I know delivery status.</td>
+<td style="text-align: left;">• Status history chronologically visible to customer.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-019</strong></td>
+<td style="text-align: left;"><strong>As a Customer</strong>, I want to view order history, so that I can review past purchases.</td>
+<td style="text-align: left;">• Historical list fetched correctly.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-020</strong></td>
+<td style="text-align: left;"><strong>As a Customer</strong>, I want to cancel eligible orders, so that I can modify my purchase.</td>
+<td style="text-align: left;">• Cancellation only allowed before 'Shipped' status.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 7 – Payment Management</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-021</strong></td>
+<td style="text-align: left;"><strong>As a Customer</strong>, I want secure online payments, so that my transaction is safe.</td>
+<td style="text-align: left;">• Payment gateway completes transaction successfully.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-022</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want payment verification, so that fraudulent transactions are prevented.</td>
+<td style="text-align: left;">• Webhooks verify payment integrity before fulfilling order.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 8 – Refund Management</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-023</strong></td>
+<td style="text-align: left;"><strong>As a Customer</strong>, I want to request refunds, so that I can recover money for eligible orders.</td>
+<td style="text-align: left;">• Refund request submitted and linked to order.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-024</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want to approve refund requests, so that refunds are processed correctly.</td>
+<td style="text-align: left;">• Approval triggers payment gateway reversal API.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-025</strong></td>
+<td style="text-align: left;"><strong>As a Customer</strong>, I want to track refund status, so that I know refund progress.</td>
+<td style="text-align: left;">• UI shows pending/approved/completed states.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 9 – Dashboard &amp; Analytics</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-026</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want to view a revenue dashboard, so that I can monitor business performance.</td>
+<td style="text-align: left;">• Global GMV charts render properly.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-027</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want to view an inventory dashboard, so that stock issues can be identified.</td>
+<td style="text-align: left;">• Aggregate inventory valuations visible.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-028</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want to view customer analytics, so that marketing decisions improve.</td>
+<td style="text-align: left;">• High-value customer cohorts identified correctly.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 10 – AI Product Description Generator</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-029</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want AI-generated product descriptions, so that listing creation becomes faster.</td>
+<td style="text-align: left;">• AI prompt returns 100+ word description within 5s.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-030</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want AI-generated SEO content, so that products rank better on search engines.</td>
+<td style="text-align: left;">• Metadata and keywords are intelligently extracted.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 11 – AI Inventory Forecasting</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-031</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want AI demand forecasting, so that stock shortages are minimized.</td>
+<td style="text-align: left;">• System predicts depletion dates accurately.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-032</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want AI reorder suggestions, so that inventory planning improves.</td>
+<td style="text-align: left;">• Reorder volumes dynamically recommended.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 12 – AI Sales Analytics</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-033</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want AI sales analysis, so that business decisions become data-driven.</td>
+<td style="text-align: left;">• AI summarizes raw sales data into human-readable insights.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-034</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want AI-generated recommendations, so that revenue growth opportunities are identified.</td>
+<td style="text-align: left;">• Specific actions (e.g., bundling) recommended based on cart history.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 13 – AI Customer Sentiment Analysis</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-035</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want sentiment analysis on reviews, so that customer feedback is understood.</td>
+<td style="text-align: left;">• Reviews automatically tagged Positive/Neutral/Negative.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-036</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want review insights, so that product improvements can be planned.</td>
+<td style="text-align: left;">• Common complaint themes extracted efficiently.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 14 – Notifications</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-037</strong></td>
+<td style="text-align: left;"><strong>As a Customer</strong>, I want to receive order notifications, so that I remain informed.</td>
+<td style="text-align: left;">• Email/App alerts sent on status changes.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-038</strong></td>
+<td style="text-align: left;"><strong>As a Customer</strong>, I want to receive refund notifications, so that I know refund progress.</td>
+<td style="text-align: left;">• Email sent on refund approval/rejection.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-039</strong></td>
+<td style="text-align: left;"><strong>As a Vendor</strong>, I want to receive inventory alerts, so that stock shortages are avoided.</td>
+<td style="text-align: left;">• App alerts triggered precisely on threshold breach.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>EPIC 15 – Audit &amp; Security</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">User Story</th>
+<th style="text-align: left;">Acceptance Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>US-040</strong></td>
+<td style="text-align: left;"><strong>As an Admin</strong>, I want to view audit logs, so that user activities are traceable.</td>
+<td style="text-align: left;">• Detailed logs visible linking users to CRUD actions.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>US-041</strong></td>
+<td style="text-align: left;"><strong>As a User</strong>, I want secure authentication, so that my account remains protected.</td>
+<td style="text-align: left;">• Passwords hashed; JWT tokens utilized strictly.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Total Backlog Summary</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: left;">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Total Epics</strong></td>
+<td style="text-align: left;">15</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Total User Stories</strong></td>
+<td style="text-align: left;">41</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Estimated Story Points</strong></td>
+<td style="text-align: left;">500+</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Development Duration</strong></td>
+<td style="text-align: left;">20 Weeks</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Team Size</strong></td>
+<td style="text-align: left;">5 Members</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Methodology</strong></td>
+<td style="text-align: left;">Agile Scrum</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Status</strong></td>
+<td style="text-align: left;"><strong>Ready for Sprint Planning, Jira Board Creation, Sprint Backlog, Task Breakdown, &amp; Development Phase.</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>End of Document</strong></p>

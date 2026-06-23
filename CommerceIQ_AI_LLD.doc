@@ -1,0 +1,433 @@
+<h1>CommerceIQ AI</h1>
+<h2>Low-Level Design (LLD) Document</h2>
+<hr />
+<h2>1. Document Information</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Document Name</strong></td>
+<td style="text-align: left;">Low-Level Design (LLD) Document</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Project Name</strong></td>
+<td style="text-align: left;">CommerceIQ AI</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Document Owner</strong></td>
+<td style="text-align: left;">Senior Software Architect / Tech Lead</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Status</strong></td>
+<td style="text-align: left;">Draft</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Creation Date</strong></td>
+<td style="text-align: left;">2026-06-24</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. Purpose</h2>
+<p>The purpose of this Low-Level Design (LLD) document is to provide a granular technical blueprint for the CommerceIQ AI platform. It specifies the internal logic, class structures, database schemas, API contracts, and detailed workflows for developers to implement the system.</p>
+<h2>3. Scope</h2>
+<p>This document covers the low-level design of the Node.js/Express.js backend, including module design (Auth, User, Vendor, Product, Inventory, Order, Refund, Customer, Dashboard, AI), Service/Repository patterns, Database schemas (PostgreSQL), and AI Service integrations. </p>
+<h2>4. Assumptions</h2>
+<ul>
+<li>Developers are proficient in TypeScript, Express.js, and PostgreSQL.</li>
+<li>The system utilizes a generic BaseRepository for common CRUD operations.</li>
+<li>External APIs (OpenAI, Gemini) have standard REST/JSON interfaces.</li>
+</ul>
+<h2>5. Constraints</h2>
+<ul>
+<li>Must adhere strictly to the Layered Modular Monolith architecture.</li>
+<li>TypeOrm or Prisma will be used as the ORM to implement the Repository pattern.</li>
+</ul>
+<h2>6. Coding Standards</h2>
+<ul>
+<li><strong>Language:</strong> TypeScript strictly typed (<code>strict: true</code> in <code>tsconfig.json</code>).</li>
+<li><strong>Naming Conventions:</strong> Classes/Interfaces -&gt; <code>PascalCase</code>, Methods/Variables -&gt; <code>camelCase</code>, DB Tables -&gt; <code>snake_case</code> plural.</li>
+<li><strong>Linting:</strong> ESLint + Prettier enforced via Husky pre-commit hooks.</li>
+</ul>
+<h2>7. Folder Structure</h2>
+<pre><code class="language-text">src/
+├── config/           # App configuration (DB, Redis, Env vars)
+├── core/             # Custom Exceptions, Base Interfaces, Middlewares
+├── modules/          # Feature Modules (Auth, Product, Order, etc.)
+│   ├── auth/
+│   │   ├── controllers/
+│   │   ├── services/
+│   │   ├── repositories/
+│   │   ├── dtos/
+│   │   └── entities/
+├── utils/            # Helper functions (Logger, Hash)
+└── app.ts            # Express App entry point
+</code></pre>
+<h2>8. Project Structure</h2>
+<p>The project follows a Modular Monolith structure where each business domain encapsulates its own controller, service, repository, and entities, connected through a central Express router.</p>
+<h2>9. Layered Architecture Design</h2>
+<ul>
+<li><strong>Router Layer:</strong> Maps endpoints to controllers.</li>
+<li><strong>Controller Layer:</strong> Handles HTTP requests, DTO validation, and HTTP responses.</li>
+<li><strong>Service Layer:</strong> Contains business logic and transactional boundaries.</li>
+<li><strong>Repository Layer:</strong> Handles database queries and ORM mapping.</li>
+</ul>
+<h2>10-15. Design Patterns</h2>
+<ul>
+<li><strong>Module Design:</strong> Independent domains communicating via DI (Dependency Injection).</li>
+<li><strong>Class/Service/Repository Design:</strong> Services inject repositories. Controllers inject services.</li>
+<li><strong>DTO Design:</strong> Data Transfer Objects validate incoming payloads using <code>class-validator</code> or <code>zod</code>.</li>
+<li><strong>Entity Design:</strong> ORM decorators map TypeScript classes to PostgreSQL tables.</li>
+</ul>
+<h2>16. Middleware Design</h2>
+<ul>
+<li><code>JwtMiddleware</code>: Validates <code>Authorization</code> header.</li>
+<li><code>RoleMiddleware</code>: Checks user roles against route permissions.</li>
+<li><code>ErrorMiddleware</code>: Catches exceptions and formats standard error responses.</li>
+</ul>
+<h2>17. Validation Design</h2>
+<p>Payloads are validated at the Controller layer before reaching the Service layer, rejecting malformed requests with <code>400 Bad Request</code>.</p>
+<h2>18. API Request Flow</h2>
+<p>Request -&gt; Rate Limiter -&gt; Auth Middleware -&gt; Role Middleware -&gt; DTO Validation -&gt; Controller -&gt; Service -&gt; Repository -&gt; Database -&gt; (Return path).</p>
+<hr />
+<h1>MODULE-WISE LLD</h1>
+<h2>1. AUTHENTICATION MODULE</h2>
+<h3>Classes &amp; Methods</h3>
+<ul>
+<li><strong>UserController:</strong> <code>GetUserProfile()</code>, <code>UpdateProfile()</code></li>
+<li><strong>AuthController:</strong> <code>Register()</code>, <code>Login()</code>, <code>RefreshToken()</code>, <code>ForgotPassword()</code>, <code>ResetPassword()</code>, <code>Logout()</code></li>
+<li><strong>AuthService:</strong> Core logic for password hashing, token generation, and user validation.</li>
+<li><strong>TokenService:</strong> Manages JWT signing, verification, and Redis refresh token storage.</li>
+<li><strong>UserRepository:</strong> Database operations for the <code>Users</code> table.</li>
+<li><strong>JwtMiddleware:</strong> Intercepts requests to validate tokens.</li>
+</ul>
+<h3>Validation Rules</h3>
+<ul>
+<li><code>RegisterDTO</code>: Email must be valid; Password must contain &gt;= 8 chars, 1 number, 1 uppercase.</li>
+<li><code>LoginDTO</code>: Email format valid; Password required.</li>
+</ul>
+<h3>Authentication Flow Diagram</h3>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant Client
+    participant AuthController
+    participant AuthService
+    participant TokenService
+    participant UserRepository
+
+    Client-&gt;&gt;AuthController: POST /api/auth/login
+    AuthController-&gt;&gt;AuthService: Login(email, password)
+    AuthService-&gt;&gt;UserRepository: FindByEmail(email)
+    UserRepository--&gt;&gt;AuthService: UserEntity
+    AuthService-&gt;&gt;AuthService: ComparePassword(hash)
+    AuthService-&gt;&gt;TokenService: GenerateTokens(userId, role)
+    TokenService--&gt;&gt;AuthService: { access_token, refresh_token }
+    AuthService--&gt;&gt;AuthController: Tokens
+    AuthController--&gt;&gt;Client: 200 OK + JWT
+</code></pre>
+<hr />
+<h2>2. PRODUCT MODULE</h2>
+<h3>Classes &amp; Methods</h3>
+<ul>
+<li><strong>ProductController:</strong> <code>CreateProduct()</code>, <code>UpdateProduct()</code>, <code>DeleteProduct()</code>, <code>GetProductById()</code>, <code>SearchProducts()</code></li>
+<li><strong>ProductService:</strong> Handles business rules (e.g., auto-generating SKU if missing, validating category).</li>
+<li><strong>ProductRepository:</strong> Executes DB transactions.</li>
+<li><strong>ProductValidator:</strong> DTO definitions for Product schemas.</li>
+</ul>
+<h3>CRUD Flow</h3>
+<ol>
+<li><strong>Create:</strong> Client POSTs -&gt; <code>ProductValidator</code> validates -&gt; <code>ProductService</code> formats data -&gt; <code>ProductRepository</code> saves -&gt; Returns 201.</li>
+<li><strong>Search:</strong> Client GETs <code>/search?q=phone</code> -&gt; Service builds dynamic query -&gt; Repository executes <code>ILIKE</code> or full-text search.</li>
+</ol>
+<hr />
+<h2>3. ORDER MODULE</h2>
+<h3>Classes &amp; Methods</h3>
+<ul>
+<li><strong>OrderController:</strong> <code>CreateOrder()</code>, <code>UpdateOrderStatus()</code>, <code>CancelOrder()</code>, <code>GetOrderHistory()</code></li>
+<li><strong>OrderService:</strong> Orchestrates inventory deduction, payment verification, and order creation within a DB transaction.</li>
+<li><strong>OrderRepository:</strong> Stores Order and OrderItem entities.</li>
+<li><strong>PaymentService:</strong> Interfaces with external payment gateways.</li>
+</ul>
+<h3>Order Processing Flow Diagram</h3>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant Client
+    participant OrderController
+    participant OrderService
+    participant InventoryService
+    participant Database
+
+    Client-&gt;&gt;OrderController: POST /api/orders
+    OrderController-&gt;&gt;OrderService: CreateOrder(payload)
+    OrderService-&gt;&gt;InventoryService: CheckStock(items)
+    InventoryService--&gt;&gt;OrderService: Stock Available
+    OrderService-&gt;&gt;Database: BEGIN TRANSACTION
+    OrderService-&gt;&gt;Database: Insert Order &amp; OrderItems
+    OrderService-&gt;&gt;InventoryService: ReduceStock(items)
+    InventoryService-&gt;&gt;Database: Update Inventory Table
+    OrderService-&gt;&gt;Database: COMMIT
+    OrderService--&gt;&gt;OrderController: OrderDetails
+    OrderController--&gt;&gt;Client: 201 Created
+</code></pre>
+<hr />
+<h2>4. INVENTORY MODULE</h2>
+<h3>Classes &amp; Methods</h3>
+<ul>
+<li><strong>InventoryController:</strong> Route handlers for stock.</li>
+<li><strong>InventoryService:</strong> <code>AddStock()</code>, <code>ReduceStock()</code>, <code>UpdateStock()</code>, <code>GenerateLowStockAlert()</code></li>
+<li><strong>InventoryRepository:</strong> DB operations with pessimistic locking during deductions.</li>
+</ul>
+<h3>Validation Rules</h3>
+<ul>
+<li>Stock cannot be reduced below zero (<code>ReduceStock</code> throws <code>BusinessRuleException</code> if <code>qty &gt; current_stock</code>).</li>
+</ul>
+<hr />
+<h2>5. REFUND MODULE</h2>
+<h3>Classes &amp; Methods</h3>
+<ul>
+<li><strong>RefundController:</strong> <code>CreateRefundRequest()</code>, <code>ApproveRefund()</code>, <code>RejectRefund()</code>, <code>ProcessRefund()</code></li>
+<li><strong>RefundService:</strong> Business logic for determining refund eligibility.</li>
+<li><strong>RazorpayService:</strong> Integration with payment gateway to execute the reverse transaction.</li>
+</ul>
+<h3>Refund Processing Flow Diagram</h3>
+<pre><code class="language-mermaid">stateDiagram-v2
+    [*] --&gt; Requested: CreateRefundRequest()
+    Requested --&gt; Approved: ApproveRefund()
+    Requested --&gt; Rejected: RejectRefund()
+    Approved --&gt; Processing: ProcessRefund() (Gateway API)
+    Processing --&gt; Completed: Webhook Success
+    Processing --&gt; Failed: Webhook Failure
+    Completed --&gt; [*]
+    Rejected --&gt; [*]
+</code></pre>
+<hr />
+<h2>6. AI MODULE</h2>
+<h3>Classes &amp; Methods</h3>
+<ul>
+<li><strong>AIController:</strong> API endpoints for AI features.</li>
+<li><strong>AIService:</strong> Orchestrator deciding which provider to use.</li>
+<li><strong>OpenAIProvider / GeminiProvider:</strong> Concrete implementations of an <code>IAIProvider</code> interface.</li>
+<li><strong>Features:</strong> <code>GenerateProductDescription()</code>, <code>GenerateSEOContent()</code>, <code>AnalyzeSalesData()</code>, <code>PredictInventoryDemand()</code>, <code>AnalyzeCustomerReviews()</code></li>
+</ul>
+<h3>AI Processing Flow Diagram</h3>
+<pre><code class="language-mermaid">graph TD
+    Client[Client Request] --&gt; AIController[AI Controller]
+    AIController --&gt; AIService[AI Service]
+    AIService --&gt; Cache[(Redis Cache)]
+    Cache -- Cache Hit --&gt; AIController
+    Cache -- Cache Miss --&gt; Provider{Provider Factory}
+    Provider --&gt;|OpenAI| OpenAI[OpenAI API]
+    Provider --&gt;|Gemini| Gemini[Gemini API]
+    OpenAI --&gt; Parser[Response Parser]
+    Gemini --&gt; Parser
+    Parser --&gt; Cache
+    Parser --&gt; AIController
+    AIController --&gt; Client
+</code></pre>
+<hr />
+<h2>7. COMPONENT DIAGRAM</h2>
+<pre><code class="language-mermaid">graph TD
+    subgraph Frontend [Next.js Web App]
+        Zustand[Zustand State] --&gt; APIClient[Axios Client]
+    end
+    subgraph Backend [Node.js Express App]
+        Router[API Router] --&gt; Controllers[Controllers Layer]
+        Controllers --&gt; Services[Service Layer]
+        Services --&gt; Repositories[Repository Layer]
+        Services --&gt; Providers[External Providers]
+    end
+    APIClient --&gt;|REST| Router
+    Repositories --&gt; Database[(PostgreSQL)]
+    Repositories --&gt; RedisCache[(Redis)]
+</code></pre>
+<hr />
+<h2>DATABASE DESIGN (ERD &amp; Schemas)</h2>
+<pre><code class="language-mermaid">erDiagram
+    USERS ||--o{ ORDERS : places
+    VENDORS ||--o{ PRODUCTS : manages
+    PRODUCTS }o--|| CATEGORIES : belongs_to
+    PRODUCTS ||--o{ INVENTORY : has
+    ORDERS ||--|{ ORDER_ITEMS : contains
+    PRODUCTS ||--o{ ORDER_ITEMS : included_in
+    ORDERS ||--o| PAYMENTS : has
+    ORDERS ||--o{ REFUNDS : may_have
+    PRODUCTS ||--o{ REVIEWS : receives
+</code></pre>
+<h3>1. Users</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>id</code></td>
+<td style="text-align: left;">UUID</td>
+<td style="text-align: left;">PK</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>email</code></td>
+<td style="text-align: left;">VARCHAR(255)</td>
+<td style="text-align: left;">UNIQUE, NOT NULL</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>password_hash</code></td>
+<td style="text-align: left;">VARCHAR</td>
+<td style="text-align: left;">NOT NULL</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>role_id</code></td>
+<td style="text-align: left;">UUID</td>
+<td style="text-align: left;">FK -&gt; Roles.id</td>
+</tr>
+</tbody>
+</table>
+<h3>2. Vendors</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>id</code></td>
+<td style="text-align: left;">UUID</td>
+<td style="text-align: left;">PK</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>user_id</code></td>
+<td style="text-align: left;">UUID</td>
+<td style="text-align: left;">FK -&gt; Users.id, UNIQUE</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>business_name</code></td>
+<td style="text-align: left;">VARCHAR(255)</td>
+<td style="text-align: left;">NOT NULL</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>status</code></td>
+<td style="text-align: left;">VARCHAR(50)</td>
+<td style="text-align: left;">DEFAULT 'Pending'</td>
+</tr>
+</tbody>
+</table>
+<h3>3. Products</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>id</code></td>
+<td style="text-align: left;">UUID</td>
+<td style="text-align: left;">PK</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>vendor_id</code></td>
+<td style="text-align: left;">UUID</td>
+<td style="text-align: left;">FK -&gt; Vendors.id</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>category_id</code></td>
+<td style="text-align: left;">UUID</td>
+<td style="text-align: left;">FK -&gt; Categories.id</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sku</code></td>
+<td style="text-align: left;">VARCHAR(100)</td>
+<td style="text-align: left;">UNIQUE, NOT NULL</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>title</code></td>
+<td style="text-align: left;">VARCHAR(255)</td>
+<td style="text-align: left;">NOT NULL</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>price</code></td>
+<td style="text-align: left;">DECIMAL(10,2)</td>
+<td style="text-align: left;">NOT NULL</td>
+</tr>
+</tbody>
+</table>
+<p><em>(Other tables include Categories, Inventory, Orders, OrderItems, Payments, Refunds, Reviews, Notifications, AuditLogs following standard normalized relational schema patterns).</em></p>
+<p><strong>Indexes Strategy:</strong>
+* B-Tree indexes on <code>email</code>, <code>sku</code>, <code>vendor_id</code>, <code>category_id</code>.
+* Composite index on OrderItems (<code>order_id</code>, <code>product_id</code>).</p>
+<hr />
+<h2>API DESIGN</h2>
+<h3>Example: Create Product</h3>
+<ul>
+<li><strong>Endpoint:</strong> <code>/api/v1/products</code></li>
+<li><strong>HTTP Method:</strong> <code>POST</code></li>
+<li><strong>Request Payload (DTO):</strong>
+    <code>json
+    {
+      "title": "Smartphone",
+      "sku": "SP-123",
+      "price": 699.99,
+      "category_id": "uuid"
+    }</code></li>
+<li><strong>Response Payload:</strong>
+    <code>json
+    {
+      "status": "success",
+      "data": {
+        "id": "uuid",
+        "title": "Smartphone",
+        "created_at": "timestamp"
+      }
+    }</code></li>
+<li><strong>Status Codes:</strong> <code>201 Created</code>, <code>400 Bad Request</code> (Validation Failed), <code>401 Unauthorized</code>.</li>
+</ul>
+<hr />
+<h2>SECURITY DESIGN</h2>
+<ul>
+<li><strong>JWT Flow:</strong> Access tokens map to <code>userId</code> and <code>role</code>. Verified via HMAC SHA-256.</li>
+<li><strong>Refresh Token Flow:</strong> Stored in DB with expiry. Client sends via HttpOnly Cookie to <code>/auth/refresh</code> to get a new Access Token.</li>
+<li><strong>Password Hashing:</strong> <code>bcrypt</code> with salt rounds = 12.</li>
+<li><strong>Rate Limiting:</strong> <code>express-rate-limit</code> backed by Redis. Limits: 100 requests / 15 min per IP.</li>
+</ul>
+<hr />
+<h2>ERROR HANDLING DESIGN</h2>
+<p><strong>Custom Exceptions:</strong></p>
+<pre><code class="language-typescript">class BaseException extends Error {
+  constructor(public statusCode: number, public errorCode: string, message: string) { super(message); }
+}
+class ValidationException extends BaseException { // 400 Bad Request, ERR_VALIDATION }
+class AuthenticationException extends BaseException { // 401 Unauthorized, ERR_AUTH }
+class AuthorizationException extends BaseException { // 403 Forbidden, ERR_FORBIDDEN }
+class BusinessRuleException extends BaseException { // 422 Unprocessable, ERR_BUSINESS }
+class DatabaseException extends BaseException { // 500 Server Error, ERR_DB }
+</code></pre>
+<p><strong>Response Structure:</strong></p>
+<pre><code class="language-json">{
+  &quot;success&quot;: false,
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;ERR_VALIDATION&quot;,
+    &quot;message&quot;: &quot;Invalid SKU format.&quot;,
+    &quot;details&quot;: [&quot;SKU must be alphanumeric&quot;]
+  }
+}
+</code></pre>
+<hr />
+<h2>LOGGING DESIGN</h2>
+<ul>
+<li><strong>Application Logs:</strong> Using <code>Winston</code>. Outputs to stdout (for Render to capture) and structured JSON files.</li>
+<li><strong>Audit Logs:</strong> Custom Express middleware logs all <code>POST</code>, <code>PUT</code>, <code>DELETE</code> methods to the <code>AuditLogs</code> PostgreSQL table (Tracking UserID, Action, Timestamp).</li>
+<li><strong>API Logs:</strong> <code>Morgan</code> middleware logs HTTP request methods, URLs, status codes, and response times.</li>
+</ul>
+<hr />
+<p><strong>End of Document</strong></p>

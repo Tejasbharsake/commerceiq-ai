@@ -1,0 +1,421 @@
+<h1>CommerceIQ AI</h1>
+<h2>Functional Requirement Document (FRD)</h2>
+<hr />
+<h2>1. Document Information</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Document Name</strong></td>
+<td style="text-align: left;">CommerceIQ AI Functional Requirement Document (FRD)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Project Name</strong></td>
+<td style="text-align: left;">CommerceIQ AI</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Document Owner</strong></td>
+<td style="text-align: left;">Senior Functional Business Analyst</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Status</strong></td>
+<td style="text-align: left;">Draft</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Creation Date</strong></td>
+<td style="text-align: left;">2026-06-24</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Last Modified Date</strong></td>
+<td style="text-align: left;">2026-06-24</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. Revision History</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Date</th>
+<th style="text-align: left;">Author</th>
+<th style="text-align: left;">Description of Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1.0</td>
+<td style="text-align: left;">2026-06-24</td>
+<td style="text-align: left;">Senior BA</td>
+<td style="text-align: left;">Initial FRD generation based on stakeholder requirements and BRD</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>3. Purpose of the Document</h2>
+<p>The purpose of this Functional Requirement Document (FRD) is to define the required features, system behavior, and functional workflows for the CommerceIQ AI platform. This document serves as the primary reference for the Development Team, QA Team, UI/UX Team, Solution Architect, and Product Manager to ensure alignment on system capabilities before proceeding to SRS, HLD, LLD, and Agile Sprint Planning.</p>
+<hr />
+<h2>4. Project Overview</h2>
+<p>CommerceIQ AI is an AI-Powered E-Commerce Administration &amp; Business Intelligence Platform. It leverages Next.js, Node.js, PostgreSQL, and AI APIs (OpenAI, Gemini) to provide an intelligent SaaS solution for e-commerce management. The platform aims to automate catalog creation, optimize inventory, and provide deep sales analytics.</p>
+<hr />
+<h2>5. Business Goals</h2>
+<ul>
+<li>Provide a robust, multi-tenant administrative backend for e-commerce vendors.</li>
+<li>Automate manual e-commerce operations (product descriptions, SEO) using AI.</li>
+<li>Enable predictive decision-making via AI Inventory Forecasting and Sales Analytics.</li>
+<li>Ensure a highly secure, scalable, and responsive application architecture.</li>
+</ul>
+<hr />
+<h2>6. Functional Scope</h2>
+<p>The scope includes the development of Authentication, User Management, Vendor Management, Product Management, Inventory Management, Order Management, Refund Management, Customer Management, Dashboards, and deep integration of AI Modules. Payment processing and storefront customer UIs are excluded from this phase.</p>
+<hr />
+<h2>7. System Overview</h2>
+<ul>
+<li><strong>Frontend:</strong> Next.js application styled with Tailwind CSS, utilizing TypeScript for type safety.</li>
+<li><strong>Backend:</strong> Express.js REST APIs running on Node.js.</li>
+<li><strong>Database:</strong> PostgreSQL for relational data storage.</li>
+<li><strong>Security:</strong> JWT-based authentication with refresh tokens.</li>
+<li><strong>AI Integrations:</strong> OpenAI and Gemini APIs for generative and analytical capabilities.</li>
+</ul>
+<hr />
+<h2>8. User Roles and Responsibilities</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Role</th>
+<th style="text-align: left;">Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Super Admin</strong></td>
+<td style="text-align: left;">Full system control, global analytics, vendor approval, user management.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Vendor Admin</strong></td>
+<td style="text-align: left;">Storefront operations, product/inventory/order management, vendor-specific AI insights.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Support Staff</strong></td>
+<td style="text-align: left;">View orders, handle refund workflows, manage customer interactions.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>System</strong></td>
+<td style="text-align: left;">Automated background jobs, AI API orchestration, notifications.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>9. Module-Wise Functional Requirements</h2>
+<h3>9.1 Authentication Module</h3>
+<p><strong>REQ-AUTH-01: Login</strong>
+*   <strong>Module Name:</strong> Authentication
+*   <strong>Requirement Name:</strong> User Login Authentication
+*   <strong>Description:</strong> The system shall authenticate users using an email and password combination, returning a JWT.
+*   <strong>Actor:</strong> All Users
+*   <strong>Preconditions:</strong> User must have a registered and active account.
+*   <strong>Main Flow:</strong> User enters credentials -&gt; System validates against DB -&gt; System generates JWT and Refresh Token -&gt; System redirects to respective dashboard.
+*   <strong>Alternate Flow:</strong> Invalid credentials -&gt; System displays error message. Account locked -&gt; System prompts password reset.
+*   <strong>Post Conditions:</strong> User session is established securely.
+*   <strong>Priority:</strong> High
+*   <strong>Acceptance Criteria:</strong> Successful login grants access based on RBAC. Passwords must be hashed. Token expiration handled smoothly.</p>
+<p><strong>REQ-AUTH-02: Role-Based Access Control (RBAC)</strong>
+*   <strong>Module Name:</strong> Authentication
+*   <strong>Requirement Name:</strong> RBAC Enforcement
+*   <strong>Description:</strong> The system must restrict UI components and API endpoints based on the logged-in user's role.
+*   <strong>Actor:</strong> System
+*   <strong>Preconditions:</strong> User is authenticated and possesses a valid JWT containing role claims.
+*   <strong>Main Flow:</strong> User requests resource -&gt; System decodes JWT -&gt; Validates role against resource permissions -&gt; Grants access.
+*   <strong>Alternate Flow:</strong> User lacks permission -&gt; System returns 403 Forbidden.
+*   <strong>Post Conditions:</strong> Resource access is securely managed.
+*   <strong>Priority:</strong> High
+*   <strong>Acceptance Criteria:</strong> Vendor cannot access Super Admin settings. Support Staff cannot delete products.</p>
+<p><em>(Registration and Forgot Password follow similar standard workflows).</em></p>
+<h3>9.2 Vendor Management Module</h3>
+<p><strong>REQ-VEND-01: Vendor Registration &amp; Approval</strong>
+*   <strong>Module Name:</strong> Vendor Management
+*   <strong>Requirement Name:</strong> Vendor Onboarding Workflow
+*   <strong>Description:</strong> Vendors can register their business, but require Super Admin approval to become active.
+*   <strong>Actor:</strong> Vendor, Super Admin
+*   <strong>Preconditions:</strong> None for registration. Super Admin must be logged in for approval.
+*   <strong>Main Flow:</strong> Vendor submits details -&gt; Status set to 'Pending' -&gt; Super Admin reviews -&gt; Status changed to 'Active' -&gt; Notification sent to Vendor.
+*   <strong>Alternate Flow:</strong> Super Admin rejects application -&gt; Status set to 'Rejected' -&gt; Notification sent with reason.
+*   <strong>Post Conditions:</strong> Vendor profile is created; login access is granted if approved.
+*   <strong>Priority:</strong> High
+*   <strong>Acceptance Criteria:</strong> Only 'Active' vendors can access the Vendor Dashboard and add products.</p>
+<h3>9.3 Product Management Module</h3>
+<p><strong>REQ-PROD-01: Add Product</strong>
+*   <strong>Module Name:</strong> Product Management
+*   <strong>Requirement Name:</strong> Create New Product Listing
+*   <strong>Description:</strong> Vendors must be able to create products with title, description, price, SKU, category, and images.
+*   <strong>Actor:</strong> Vendor Admin
+*   <strong>Preconditions:</strong> Vendor account is active.
+*   <strong>Main Flow:</strong> Vendor clicks 'Add Product' -&gt; Fills form -&gt; System validates SKU uniqueness -&gt; Saves to DB -&gt; Displays success message.
+*   <strong>Alternate Flow:</strong> SKU already exists -&gt; System displays validation error.
+*   <strong>Post Conditions:</strong> Product is available in the catalog and inventory tracking is initialized.
+*   <strong>Priority:</strong> High
+*   <strong>Acceptance Criteria:</strong> Form must validate all mandatory fields. Images must be uploaded and compressed.</p>
+<h3>9.4 AI Modules</h3>
+<p><strong>REQ-AI-01: AI Product Description Generator</strong>
+*   <strong>Module Name:</strong> AI Modules
+*   <strong>Requirement Name:</strong> Automated Product Description
+*   <strong>Description:</strong> System generates a comprehensive product description using OpenAI/Gemini based on basic inputs (Title, Key Features).
+*   <strong>Actor:</strong> Vendor Admin
+*   <strong>Preconditions:</strong> Vendor is adding or editing a product. API credits are available.
+*   <strong>Main Flow:</strong> Vendor inputs Title and keywords -&gt; Clicks 'Generate AI Description' -&gt; System calls AI API -&gt; System populates Description field with AI response -&gt; Vendor reviews.
+*   <strong>Alternate Flow:</strong> AI API times out -&gt; System displays error and allows manual entry.
+*   <strong>Post Conditions:</strong> SEO-optimized description is loaded into the rich text editor.
+*   <strong>Priority:</strong> High
+*   <strong>Acceptance Criteria:</strong> Generated text must be &gt;100 words, logically structured, and returned within 5 seconds.</p>
+<p><strong>REQ-AI-02: AI Inventory Forecasting</strong>
+*   <strong>Module Name:</strong> AI Modules
+*   <strong>Requirement Name:</strong> Predictive Stock Depletion Analysis
+*   <strong>Description:</strong> The system analyzes 90-day historical sales data to forecast when a product will run out of stock.
+*   <strong>Actor:</strong> Vendor Admin, System
+*   <strong>Preconditions:</strong> Product has at least 30 days of sales history.
+*   <strong>Main Flow:</strong> System cron job aggregates daily sales -&gt; Sends data payload to AI API -&gt; AI returns 'Estimated Days to Depletion' -&gt; System updates DB -&gt; Highlights low stock items on Dashboard.
+*   <strong>Alternate Flow:</strong> Insufficient sales data -&gt; System marks forecast as 'N/A'.
+*   <strong>Post Conditions:</strong> Inventory dashboard reflects updated predictive metrics.
+*   <strong>Priority:</strong> High
+*   <strong>Acceptance Criteria:</strong> Forecast accuracy must adapt dynamically; items &lt; 14 days to depletion trigger a visual alert.</p>
+<p><strong>REQ-AI-03: AI Customer Review Sentiment Analysis</strong>
+*   <strong>Module Name:</strong> AI Modules
+*   <strong>Requirement Name:</strong> Review Sentiment Tagging
+*   <strong>Description:</strong> Incoming customer reviews are automatically classified as Positive, Neutral, or Negative.
+*   <strong>Actor:</strong> System
+*   <strong>Preconditions:</strong> A new review is ingested via API.
+*   <strong>Main Flow:</strong> Review payload received -&gt; Passed to AI API -&gt; AI assigns Sentiment Score &amp; Tag -&gt; Saved to DB -&gt; Displayed in Customer Management module.
+*   <strong>Alternate Flow:</strong> Review contains unsupported language -&gt; Tagged as 'Manual Review Required'.
+*   <strong>Post Conditions:</strong> Review is indexed and affects the product's overall sentiment health score.
+*   <strong>Priority:</strong> Medium
+*   <strong>Acceptance Criteria:</strong> &gt;90% accuracy in sentiment classification against a baseline dataset.</p>
+<hr />
+<h2>10. User Stories</h2>
+<ul>
+<li><strong>US-101:</strong> As a Vendor, I want to use AI to generate my product descriptions so that I can save time on catalog creation.</li>
+<li><strong>US-102:</strong> As a Super Admin, I want to view a centralized revenue dashboard to track platform-wide financial performance.</li>
+<li><strong>US-103:</strong> As Support Staff, I want to see the AI sentiment of a customer's recent reviews so I can tailor my communication appropriately.</li>
+<li><strong>US-104:</strong> As a Vendor, I want to receive low-stock alerts based on AI forecasting so I don't miss out on potential sales.</li>
+</ul>
+<hr />
+<h2>11. Use Case Specifications</h2>
+<p><strong>Use Case: Process Refund Workflow</strong>
+*   <strong>Trigger:</strong> Customer requests a refund.
+*   <strong>Actor:</strong> Support Staff
+*   <strong>Normal Flow:</strong> 
+    1. Support Staff opens Refund Management module.
+    2. Locates Order ID and reviews customer claim.
+    3. Clicks 'Approve Refund'.
+    4. System calls payment gateway to process reverse transaction.
+    5. System updates Order Status to 'Refunded'.
+    6. System adjusts inventory (if item is returned).
+*   <strong>Exceptions:</strong> Payment gateway rejects refund -&gt; System displays error and sets status to 'Manual Intervention'.</p>
+<hr />
+<h2>12. Functional Workflow Diagrams</h2>
+<p><em>(Text Representation for Mermaid Generation)</em>
+<code>mermaid
+graph TD
+    A[Order Placed] --&gt; B[Inventory Deducted]
+    B --&gt; C{AI Sales Analytics Job}
+    C --&gt; D[Aggregate Daily Sales]
+    D --&gt; E[Send to Gemini/OpenAI]
+    E --&gt; F[Generate Sales Insights &amp; Trends]
+    F --&gt; G[Update Dashboards]</code></p>
+<hr />
+<h2>13. Input and Output Specifications</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Screen / API</th>
+<th style="text-align: left;">Input Fields</th>
+<th style="text-align: left;">Output / Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Product Creation</strong></td>
+<td style="text-align: left;">Title(String), SKU(String), Price(Decimal), Category(ID)</td>
+<td style="text-align: left;"><code>201 Created</code>, Product Object JSON</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>AI Generator</strong></td>
+<td style="text-align: left;">Prompt(String), Context(String)</td>
+<td style="text-align: left;"><code>200 OK</code>, GeneratedText(String)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Sales Dashboard</strong></td>
+<td style="text-align: left;">DateRange(Date), VendorID(String)</td>
+<td style="text-align: left;">JSON Array of Aggregated Sales Metrics</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>14. Field-Level Validations</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Validation Rule</th>
+<th style="text-align: left;">Error Message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Email</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: left;">Must match standard email regex</td>
+<td style="text-align: left;">"Please enter a valid email address."</td>
+</tr>
+<tr>
+<td style="text-align: left;">Password</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: left;">Min 8 chars, 1 uppercase, 1 number</td>
+<td style="text-align: left;">"Password does not meet complexity requirements."</td>
+</tr>
+<tr>
+<td style="text-align: left;">Price</td>
+<td style="text-align: left;">Decimal</td>
+<td style="text-align: left;">Must be &gt; 0.00</td>
+<td style="text-align: left;">"Price must be greater than zero."</td>
+</tr>
+<tr>
+<td style="text-align: left;">SKU</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: left;">Must be unique per vendor, Alphanumeric</td>
+<td style="text-align: left;">"SKU already exists."</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>15. Business Rules</h2>
+<ul>
+<li><strong>BR-01:</strong> AI Content generation limits are capped at 500 requests per vendor per month unless on a premium tier.</li>
+<li><strong>BR-02:</strong> Inventory adjustments resulting in negative stock are strictly prohibited.</li>
+<li><strong>BR-03:</strong> A user session token (JWT) expires strictly after 15 minutes, requiring silent refresh via HttpOnly refresh token.</li>
+<li><strong>BR-04:</strong> Vendors can only access data, orders, and reports tied to their specific <code>vendor_id</code>.</li>
+</ul>
+<hr />
+<h2>16. Exception Handling</h2>
+<ul>
+<li><strong>AI API Failures:</strong> If OpenAI/Gemini is down, the system gracefully degrades by hiding AI buttons and falling back to manual entry inputs.</li>
+<li><strong>Database Timeouts:</strong> Retries transactional queries 3 times with exponential backoff before throwing a <code>503 Service Unavailable</code> error to the frontend.</li>
+</ul>
+<hr />
+<h2>17. Error Handling Requirements</h2>
+<ul>
+<li>All backend errors must return a standardized JSON format: <code>{ "error_code": "ERR-XXX", "message": "Human readable message" }</code>.</li>
+<li>Frontend must implement global error boundaries to prevent blank screens during React rendering crashes.</li>
+<li>Sensitive DB errors (e.g., PostgreSQL syntax errors) must never be leaked to the client response.</li>
+</ul>
+<hr />
+<h2>18. Notification Requirements</h2>
+<ul>
+<li><strong>In-App Alerts:</strong> Real-time toast notifications for successful actions (e.g., "Product Saved").</li>
+<li><strong>Email Notifications:</strong> Critical events (Vendor Approved, Password Reset, High-Value Order Received) utilizing NodeMailer or equivalent SaaS.</li>
+<li><strong>System Alerts:</strong> Slack integration for Super Admins regarding unhandled backend exceptions.</li>
+</ul>
+<hr />
+<h2>19. Reporting Requirements</h2>
+<ul>
+<li><strong>Format:</strong> Exportable to CSV and PDF formats via the UI.</li>
+<li><strong>Vendor Reports:</strong> Monthly Sales Summary, Inventory Valuation, Top 10 Selling Products.</li>
+<li><strong>Platform Reports:</strong> Global GMV (Gross Merchandise Value), AI API Usage &amp; Cost per Vendor.</li>
+</ul>
+<hr />
+<h2>20. Audit Requirements</h2>
+<ul>
+<li>All data modifications (POST, PUT, DELETE) must be tracked via an <code>audit_logs</code> PostgreSQL table.</li>
+<li>Audit entries must contain: <code>timestamp</code>, <code>user_id</code>, <code>action</code>, <code>table_affected</code>, <code>old_value</code>, <code>new_value</code>, <code>ip_address</code>.</li>
+</ul>
+<hr />
+<h2>21. Security Requirements</h2>
+<ul>
+<li><strong>Transport Layer:</strong> All traffic forced over HTTPS (TLS 1.3).</li>
+<li><strong>Application Layer:</strong> Next.js must sanitize inputs to prevent XSS. Express backend must use parameterized queries to prevent SQL Injection.</li>
+<li><strong>Authentication:</strong> JWT secrets must be rotated regularly. Refresh tokens must be stored as secure HttpOnly cookies.</li>
+</ul>
+<hr />
+<h2>22. Acceptance Criteria (Platform Level)</h2>
+<ul>
+<li>The application passes all OWASP Top 10 automated security scans.</li>
+<li>The Next.js frontend scores &gt; 90 on Google Lighthouse (Performance, Accessibility, SEO).</li>
+<li>AI generation responses average &lt; 5 seconds under normal API load conditions.</li>
+</ul>
+<hr />
+<h2>23. Functional Dependency Matrix</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Depends On</th>
+<th style="text-align: left;">Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Order Management</strong></td>
+<td style="text-align: left;">Product Management</td>
+<td style="text-align: left;">Cannot place orders without products.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>AI Inventory Forecast</strong></td>
+<td style="text-align: left;">Order Management</td>
+<td style="text-align: left;">Requires historical sales data to run predictive models.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Vendor Dashboard</strong></td>
+<td style="text-align: left;">Vendor Approval</td>
+<td style="text-align: left;">Data cannot be displayed until vendor is active.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>24. Traceability Matrix</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Business Goal (BRD)</th>
+<th style="text-align: left;">Functional Requirement (FRD)</th>
+<th style="text-align: left;">Module</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Automate Content</td>
+<td style="text-align: left;">REQ-AI-01: AI Product Description</td>
+<td style="text-align: left;">AI Modules</td>
+</tr>
+<tr>
+<td style="text-align: left;">Prevent Stockouts</td>
+<td style="text-align: left;">REQ-AI-02: AI Inventory Forecasting</td>
+<td style="text-align: left;">Inventory / AI</td>
+</tr>
+<tr>
+<td style="text-align: left;">Secure Platform</td>
+<td style="text-align: left;">REQ-AUTH-02: RBAC Enforcement</td>
+<td style="text-align: left;">Authentication</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>25. Assumptions</h2>
+<ul>
+<li>Third-party APIs (OpenAI, Gemini) will maintain their current schema and latency profiles.</li>
+<li>Deployment infrastructure on Vercel and Render will support the necessary traffic volume without architectural changes during Phase 1.</li>
+<li>The business logic does not require integration with physical POS (Point of Sale) systems.</li>
+</ul>
+<hr />
+<h2>26. Constraints</h2>
+<ul>
+<li><strong>Budget:</strong> AI API consumption must be monitored and optimized to stay within operating budget.</li>
+<li><strong>Timeline:</strong> The Sprint Planning will be constrained by a fixed release date, prioritizing core CRUD and MVP AI features over advanced 'nice-to-have' analytics in the initial launch.</li>
+<li><strong>Tech Stack:</strong> Must strictly adhere to the requested stack (Next.js, Node.js, PostgreSQL); no NoSQL databases permitted for this phase.</li>
+</ul>
+<hr />
+<p><strong>End of Document</strong></p>

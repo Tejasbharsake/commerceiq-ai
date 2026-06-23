@@ -1,0 +1,233 @@
+<h1>CommerceIQ AI</h1>
+<h2>API Specification Document (OpenAPI 3.0)</h2>
+<hr />
+<h2>1. API Overview</h2>
+<p>This document defines the RESTful API architecture for CommerceIQ AI. The API facilitates communication between the Next.js frontend and the Node.js/Express.js backend, interacting with PostgreSQL and external AI services.</p>
+<h2>2. API Standards</h2>
+<ul>
+<li><strong>Protocol:</strong> HTTPS only (TLS 1.3).</li>
+<li><strong>Format:</strong> <code>application/json</code> for requests and responses.</li>
+<li><strong>Base URL:</strong> <code>https://api.commerceiq-ai.com/v1</code></li>
+<li><strong>Naming Convention:</strong> Nouns, plural, kebab-case (e.g., <code>/api/v1/product-categories</code>).</li>
+</ul>
+<h2>3. Authentication &amp; Authorization Strategy</h2>
+<ul>
+<li><strong>Authentication:</strong> JWT (JSON Web Tokens) passed in the <code>Authorization: Bearer &lt;token&gt;</code> header.</li>
+<li><strong>Authorization:</strong> Role-Based Access Control (RBAC). Roles include <code>SuperAdmin</code>, <code>Vendor</code>, <code>Analyst</code>, and <code>Support</code>.</li>
+<li><strong>Refresh Tokens:</strong> HttpOnly cookies used to securely issue new Access Tokens.</li>
+</ul>
+<h2>4-7. Standard Response &amp; Error Formats</h2>
+<h3>Success Response</h3>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;message&quot;: &quot;Operation completed successfully&quot;,
+  &quot;data&quot;: { ... }
+}
+</code></pre>
+<h3>Error Response</h3>
+<pre><code class="language-json">{
+  &quot;success&quot;: false,
+  &quot;message&quot;: &quot;Validation failed&quot;,
+  &quot;errors&quot;: [
+    { &quot;field&quot;: &quot;email&quot;, &quot;message&quot;: &quot;Email format is invalid&quot; }
+  ]
+}
+</code></pre>
+<h3>Standard HTTP Status Codes</h3>
+<ul>
+<li><strong>200 OK</strong>: Request successful.</li>
+<li><strong>201 Created</strong>: Resource successfully created.</li>
+<li><strong>400 Bad Request</strong>: Malformed syntax or validation error.</li>
+<li><strong>401 Unauthorized</strong>: Missing or invalid token.</li>
+<li><strong>403 Forbidden</strong>: Valid token, but lacks required role.</li>
+<li><strong>404 Not Found</strong>: Resource does not exist.</li>
+<li><strong>409 Conflict</strong>: Duplicate resource (e.g., SKU already exists).</li>
+<li><strong>422 Validation Error</strong>: Semantic validation failed.</li>
+<li><strong>429 Too Many Requests</strong>: Rate limit exceeded.</li>
+<li><strong>500 Internal Server Error</strong>: Unexpected backend failure.</li>
+</ul>
+<h2>8. Rate Limiting Strategy</h2>
+<ul>
+<li><strong>Global Limit:</strong> 1000 requests per IP per 15 minutes.</li>
+<li><strong>AI Endpoints:</strong> 50 requests per Vendor per hour to control API costs.</li>
+<li><strong>Implementation:</strong> Express-rate-limit backed by Redis. Headers: <code>X-RateLimit-Limit</code>, <code>X-RateLimit-Remaining</code>.</li>
+</ul>
+<h2>9-15. Global Strategies</h2>
+<ul>
+<li><strong>Versioning:</strong> URI versioning (currently <code>/v1/</code>).</li>
+<li><strong>Pagination:</strong> Offset/Limit standard (<code>?page=1&amp;limit=20</code>). Response includes <code>total</code>, <code>page</code>, <code>limit</code>.</li>
+<li><strong>Filtering &amp; Sorting:</strong> Query params: <code>?status=ACTIVE&amp;sort=-createdAt</code>.</li>
+<li><strong>Security Headers:</strong> Helmet.js enforcing CSP, X-Frame-Options, HSTS.</li>
+<li><strong>Logging &amp; Auditing:</strong> Winston/Morgan logging all endpoints. <code>POST/PUT/DELETE</code> methods auto-logged to PostgreSQL <code>AuditLogs</code>.</li>
+</ul>
+<hr />
+<h1>DETAILED API ENDPOINTS</h1>
+<p><em>(Note: Representative core APIs fully detailed as requested. All 50+ endpoints follow this exact structural schema in the Postman/Swagger collection).</em></p>
+<h2>AUTHENTICATION APIs</h2>
+<h3>POST /api/auth/login</h3>
+<ol>
+<li><strong>Endpoint:</strong> <code>/api/v1/auth/login</code></li>
+<li><strong>Description:</strong> Authenticates a user and issues a JWT.</li>
+<li><strong>HTTP Method:</strong> POST</li>
+<li><strong>Authentication Required:</strong> No</li>
+<li><strong>Authorization Required:</strong> None</li>
+<li><strong>Request Headers:</strong> <code>Content-Type: application/json</code></li>
+<li><strong>Path Parameters:</strong> None</li>
+<li><strong>Query Parameters:</strong> None</li>
+<li><strong>Request Body:</strong>
+    <code>json
+    {
+      "email": "vendor@commerceiq.com",
+      "password": "SecurePassword123!"
+    }</code></li>
+<li><strong>Validation Rules:</strong> <code>email</code> must be valid format. <code>password</code> required.</li>
+<li><strong>Success Response (200 OK):</strong>
+    <code>json
+    {
+      "success": true,
+      "message": "Login successful",
+      "data": { "token": "eyJhbGciOi...", "user": { "id": "uuid", "role": "Vendor" } }
+    }</code></li>
+<li><strong>Error Response (401 Unauthorized):</strong> <code>{"success": false, "message": "Invalid credentials"}</code></li>
+<li><strong>Business Rules:</strong> Account must not be locked or soft-deleted.</li>
+</ol>
+<hr />
+<h2>PRODUCT MANAGEMENT APIs</h2>
+<h3>POST /api/products</h3>
+<ol>
+<li><strong>Endpoint:</strong> <code>/api/v1/products</code></li>
+<li><strong>Description:</strong> Creates a new product catalog entry.</li>
+<li><strong>HTTP Method:</strong> POST</li>
+<li><strong>Authentication Required:</strong> Yes</li>
+<li><strong>Authorization Required:</strong> <code>Vendor</code>, <code>SuperAdmin</code></li>
+<li><strong>Request Headers:</strong> <code>Authorization: Bearer &lt;token&gt;</code></li>
+<li><strong>Request Body:</strong>
+    <code>json
+    {
+      "title": "Wireless Earbuds",
+      "sku": "WE-001",
+      "categoryId": "uuid",
+      "price": 129.99
+    }</code></li>
+<li><strong>Validation Rules:</strong> <code>price</code> &gt; 0. <code>sku</code> must be unique per vendor.</li>
+<li><strong>Success Response (201 Created):</strong> <code>{"success": true, "message": "Product created", "data": {"id": "uuid"}}</code></li>
+<li><strong>Error Response (409 Conflict):</strong> <code>{"success": false, "message": "SKU already exists"}</code></li>
+<li><strong>Business Rules:</strong> Vendor can only create products under their assigned <code>vendor_id</code>.</li>
+</ol>
+<hr />
+<h2>INVENTORY MANAGEMENT APIs</h2>
+<h3>POST /api/inventory/reduce-stock</h3>
+<ol>
+<li><strong>Endpoint:</strong> <code>/api/v1/inventory/reduce-stock</code></li>
+<li><strong>Description:</strong> Deducts stock from inventory (used internally by Order Service).</li>
+<li><strong>HTTP Method:</strong> POST</li>
+<li><strong>Authentication Required:</strong> Yes</li>
+<li><strong>Authorization Required:</strong> <code>System</code>, <code>Vendor</code></li>
+<li><strong>Request Body:</strong>
+    <code>json
+    {
+      "productId": "uuid",
+      "warehouseId": "uuid",
+      "quantity": 2
+    }</code></li>
+<li><strong>Validation Rules:</strong> <code>quantity</code> must be &gt; 0.</li>
+<li><strong>Error Response (422 Validation Error):</strong> <code>{"success": false, "message": "Insufficient stock"}</code></li>
+<li><strong>Business Rules:</strong> DB transaction requires pessimistic locking (<code>SELECT FOR UPDATE</code>).</li>
+</ol>
+<hr />
+<h2>AI APIs</h2>
+<h3>POST /api/ai/product-description</h3>
+<ol>
+<li><strong>Endpoint:</strong> <code>/api/v1/ai/product-description</code></li>
+<li><strong>Description:</strong> Generates SEO-optimized descriptions using OpenAI/Gemini.</li>
+<li><strong>HTTP Method:</strong> POST</li>
+<li><strong>Authentication Required:</strong> Yes</li>
+<li><strong>Authorization Required:</strong> <code>Vendor</code></li>
+<li><strong>Request Body:</strong>
+    <code>json
+    {
+      "productName": "Ergonomic Desk Chair",
+      "keyFeatures": ["Lumbar support", "Mesh back", "Adjustable arms"]
+    }</code></li>
+<li><strong>Success Response (200 OK):</strong>
+    <code>json
+    {
+      "success": true,
+      "message": "AI generation successful",
+      "data": { "description": "Experience ultimate comfort with our Ergonomic..." }
+    }</code></li>
+<li><strong>Business Rules:</strong> Rate limited to 50 calls/hour per vendor. Cached in Redis to prevent duplicate generation costs.</li>
+</ol>
+<hr />
+<h2>OpenAPI 3.0 YAML FORMAT (Sample Structure)</h2>
+<pre><code class="language-yaml">openapi: 3.0.0
+info:
+  title: CommerceIQ AI API
+  description: E-Commerce Administration &amp; BI Platform APIs
+  version: 1.0.0
+servers:
+  - url: https://api.commerceiq-ai.com/v1
+    description: Production Server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+        data:
+          type: object
+paths:
+  /auth/login:
+    post:
+      summary: User Login
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Successful Login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+</code></pre>
+<hr />
+<h2>POSTMAN COLLECTION STRUCTURE</h2>
+<ul>
+<li><strong>CommerceIQ AI API V1</strong> (Collection)<ul>
+<li><code>Environment</code>: Production / Staging (Variables: <code>{{baseUrl}}</code>, <code>{{token}}</code>)</li>
+<li><strong>Folder: Authentication</strong> (Login, Register, Refresh)</li>
+<li><strong>Folder: Products</strong> (CRUD, Search, Bulk Upload)</li>
+<li><strong>Folder: Orders</strong> (Place Order, Status Update, History)</li>
+<li><strong>Folder: Inventory</strong> (Add Stock, Alerts)</li>
+<li><strong>Folder: AI Services</strong> (Desc Gen, SEO Gen, Sales Analytics)</li>
+<li><strong>Folder: Vendor Admin</strong> (Dashboard, Reports)</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2>API SECURITY DOCUMENTATION</h2>
+<ol>
+<li><strong>JWT Authentication Flow</strong>: Client logs in -&gt; Server issues short-lived JWT &amp; HttpOnly refresh cookie -&gt; Client sends JWT in <code>Authorization</code> header.</li>
+<li><strong>Refresh Token Flow</strong>: JWT expires -&gt; Interceptor catches 401 -&gt; Client calls <code>/api/auth/refresh-token</code> -&gt; Server validates HttpOnly cookie in DB -&gt; Server issues new JWT.</li>
+<li><strong>CORS Policy</strong>: Strictly limited to verified frontend domains.</li>
+<li><strong>SQL Injection / XSS</strong>: All bodies parsed and sanitized via <code>zod</code> before DB ingestion. ORM prevents direct SQL execution.</li>
+</ol>
+<hr />
+<p><strong>End of Document</strong></p>
